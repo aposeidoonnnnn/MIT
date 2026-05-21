@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>How much of your bills does the Singapore Budget actually cover?</title>
+  <meta name="description" content="An interactive essay on cost of living, Budget support, and how the two diverge over ten years." />
+  <style>
+    :root {
+      --bg: #FAFAF7;
+      --text: #111;
+      --muted: #6B7280;
+      --accent: #B91C1C;
+      --rule: #E7E5E0;
+      --soft: rgba(0, 0, 0, 0.04);
+      --serif: "Source Serif 4", "Source Serif Pro", "Iowan Old Style", Charter, Cambria, Georgia, serif;
+      --sans: -apple-system, "Helvetica Neue", "Segoe UI", Roboto, system-ui, Arial, sans-serif;
+      --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--serif);
+      font-size: 18px;
+      line-height: 1.7;
+      font-feature-settings: "kern", "liga";
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    .essay {
+      max-width: 38rem;
+      margin: 0 auto;
+      padding: 5rem 1.5rem 6rem;
+    }
+
+    .essay > header { margin-bottom: 4rem; }
+    .kicker {
+      font-family: var(--sans);
+      font-size: 0.74rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 0 0 1rem;
+      font-weight: 600;
+    }
+    .essay h1 {
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: clamp(1.75rem, 4.2vw, 2.5rem);
+      letter-spacing: -0.015em;
+      line-height: 1.18;
+      margin: 0 0 1rem;
+      max-width: 32rem;
+    }
+    .standfirst {
+      color: var(--muted);
+      font-style: italic;
+      margin: 0;
+      font-size: 1.05rem;
+      max-width: 28rem;
+    }
+
+    .moment {
+      margin: 3.5rem 0 0;
+      border-top: 1px solid var(--rule);
+      padding-top: 2rem;
+    }
+    .moment h2 {
+      font-family: var(--sans);
+      font-weight: 600;
+      font-size: 0.74rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 0 0 1.25rem;
+    }
+    .moment h2 .step-num { color: var(--accent); margin-right: 0.5em; }
+    .moment p { margin: 0 0 1rem; }
+    .moment p.headline {
+      font-family: var(--serif);
+      font-size: 1.35rem;
+      line-height: 1.4;
+      letter-spacing: -0.005em;
+      margin: 0 0 0.85rem;
+      max-width: 32rem;
+    }
+    .aside {
+      font-size: 0.92rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+    .footnote {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 1rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--rule);
+    }
+
+    .rnum {
+      font-family: var(--sans);
+      font-variant-numeric: tabular-nums;
+      font-weight: 500;
+      font-size: 0.97em;
+      white-space: nowrap;
+      padding: 0 0.05em;
+      border-radius: 2px;
+      transition: color 140ms ease, background-color 140ms ease, border-color 140ms ease;
+    }
+    .rnum.editable {
+      border-bottom: 1px dotted var(--muted);
+      cursor: ew-resize;
+      user-select: none;
+      touch-action: none;
+    }
+    .rnum.editable:hover {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      border-bottom-style: solid;
+    }
+    .rnum.editable:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+      color: var(--accent);
+      border-bottom-color: transparent;
+    }
+    .rnum.dragging {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      border-bottom-style: solid;
+      background: rgba(185, 28, 28, 0.06);
+    }
+    .rnum.flash { background: rgba(185, 28, 28, 0.12); }
+    @media (prefers-reduced-motion: reduce) {
+      .rnum { transition: none; }
+      .rnum.flash { background: transparent; }
+    }
+
+    .income-slider {
+      margin: 1.5rem 0 0.5rem;
+      max-width: 22rem;
+    }
+    .income-slider input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 24px;
+      background: transparent;
+      cursor: pointer;
+      display: block;
+    }
+    .income-slider input[type="range"]::-webkit-slider-runnable-track {
+      height: 1px;
+      background: var(--muted);
+    }
+    .income-slider input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      background: var(--text);
+      border-radius: 50%;
+      margin-top: -6.5px;
+      border: none;
+      transition: background-color 140ms ease, transform 140ms ease;
+    }
+    .income-slider input[type="range"]::-moz-range-track {
+      height: 1px;
+      background: var(--muted);
+      border: none;
+    }
+    .income-slider input[type="range"]::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      background: var(--text);
+      border: none;
+      border-radius: 50%;
+    }
+    .income-slider input[type="range"]:active::-webkit-slider-thumb {
+      background: var(--accent);
+      transform: scale(1.18);
+    }
+    .income-slider input[type="range"]:focus-visible::-webkit-slider-thumb {
+      box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.25);
+    }
+    .income-slider .scale {
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.35rem;
+    }
+
+    .housing-pick {
+      font-family: var(--sans);
+      font-size: 0.92rem;
+      background: transparent;
+      border: none;
+      border-bottom: 1px dotted var(--muted);
+      color: var(--text);
+      padding: 0 0.15rem;
+      cursor: pointer;
+    }
+    .housing-pick:focus {
+      outline: none;
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      border-bottom-style: solid;
+    }
+
+    .scheme-list { padding-left: 1.2rem; margin: 0.5rem 0 1rem; }
+    .scheme-list li { margin-bottom: 0.6rem; }
+    .scheme-list li strong {
+      font-family: var(--sans);
+      font-weight: 600;
+      font-size: 0.95em;
+    }
+
+    .chart-wrap {
+      margin: 1.75rem 0 1rem;
+      width: 100%;
+    }
+    .chart-wrap svg { width: 100%; height: auto; display: block; overflow: visible; }
+    .caption {
+      font-size: 0.95rem;
+      color: var(--muted);
+      font-style: italic;
+      max-width: 32rem;
+    }
+    .caption strong {
+      color: var(--accent);
+      font-style: normal;
+      font-family: var(--sans);
+      font-weight: 600;
+    }
+
+    details.model-coda {
+      margin-top: 1.5rem;
+    }
+    details.model-coda summary {
+      font-family: var(--sans);
+      font-size: 0.92rem;
+      cursor: pointer;
+      color: var(--text);
+      list-style: none;
+      padding: 0.5rem 0;
+      user-select: none;
+    }
+    details.model-coda summary::-webkit-details-marker { display: none; }
+    details.model-coda summary::before {
+      content: "▸";
+      display: inline-block;
+      width: 1.2em;
+      color: var(--muted);
+      transition: transform 200ms ease;
+    }
+    details.model-coda[open] summary::before { transform: rotate(90deg); }
+    @media (prefers-reduced-motion: reduce) {
+      details.model-coda[open] summary::before,
+      details.model-coda summary::before { transition: none; }
+    }
+    .maths p { margin: 0.65rem 0; }
+    .maths .f {
+      font-family: var(--mono);
+      background: var(--soft);
+      padding: 0.7rem 0.9rem;
+      border-radius: 4px;
+      font-size: 0.92rem;
+      margin: 0.5rem 0 1rem;
+      line-height: 1.6;
+      overflow-x: auto;
+    }
+    .maths em { font-style: italic; }
+    .maths h3 {
+      font-family: var(--sans);
+      font-size: 0.98rem;
+      font-weight: 600;
+      letter-spacing: -0.005em;
+      color: var(--text);
+      margin: 2rem 0 0.6rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--rule);
+    }
+    .maths h3:first-child {
+      margin-top: 0.5rem;
+      padding-top: 0;
+      border-top: none;
+    }
+    .maths h3 .ix {
+      color: var(--accent);
+      font-family: var(--mono);
+      font-size: 0.82em;
+      margin-right: 0.5em;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+    .maths ul {
+      padding-left: 1.3rem;
+      margin: 0.7rem 0 1rem;
+    }
+    .maths ul li { margin-bottom: 0.5rem; }
+    .maths strong {
+      font-family: var(--sans);
+      font-weight: 600;
+      font-size: 0.96em;
+    }
+    .maths .takeaway {
+      font-style: italic;
+      color: var(--muted);
+      border-left: 2px solid var(--rule);
+      padding: 0.05rem 0 0.05rem 0.85rem;
+      margin: 0.75rem 0 1rem;
+    }
+
+    .essay > footer {
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--rule);
+      font-family: var(--sans);
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .essay > footer p { margin: 0.35rem 0; }
+    .essay > footer .links a {
+      color: var(--text);
+      text-decoration: none;
+      border-bottom: 1px solid var(--muted);
+      padding-bottom: 1px;
+      margin-right: 1rem;
+    }
+    .essay > footer .links a:hover {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    @media (max-width: 30rem) {
+      body { font-size: 17px; }
+      .essay { padding: 3rem 1.1rem 4rem; }
+      .moment { margin-top: 2.75rem; }
+    }
+  </style>
+</head>
+<body>
+  <article class="essay">
+    <header>
+      <p class="kicker">A reactive essay</p>
+      <h1>How much of your bills does the Singapore Budget actually cover?</h1>
+      <p class="standfirst">Drag the underlined numbers as you read. Everything below recalculates as you go.</p>
+    </header>
+
+    <section class="moment" id="hook">
+      <h2><span class="step-num">01</span>The household</h2>
+      <p>Your household earns <span class="rnum" data-bind="income">S$8,000</span> a month across <span class="rnum" data-bind="persons">2</span> people. That works out to <span class="rnum" data-bind="pchi">S$4,000</span> per person — placing you in the <span class="rnum" data-bind="class-label">middle</span>-income band on Singapore's PCHI scale.</p>
+      <div class="income-slider">
+        <input type="range" id="income-range" min="0" max="100000" step="500" value="8000" aria-label="Monthly household income in Singapore dollars" />
+        <div class="scale" aria-hidden="true"><span>S$0</span><span>S$50K</span><span>S$100K</span></div>
+      </div>
+      <p class="aside">The slider above moves in S$500 steps. The household-size number is also draggable. PCHI thresholds used here: low ≤ S$1,500, middle S$1,501–5,000, high above S$5,000.</p>
+    </section>
+
+    <section class="moment" id="basket">
+      <h2><span class="step-num">02</span>The basket</h2>
+      <p>A household like yours spends about <span class="rnum" data-bind="e0">S$2,260</span> a month: roughly <span class="rnum" data-bind="food">S$620</span> on food, <span class="rnum" data-bind="transport">S$420</span> on transport, <span class="rnum" data-bind="utilities">S$160</span> on utilities, <span class="rnum" data-bind="education">S$280</span> on education, <span class="rnum" data-bind="healthcare">S$260</span> on healthcare, and <span class="rnum" data-bind="misc">S$520</span> on everything else.</p>
+      <p class="aside">Categories are draggable individually. Baselines vary with housing type:
+        <select id="housing" class="housing-pick" aria-label="Housing type">
+          <option value="hdb12">1–2 room HDB</option>
+          <option value="hdb3">3-room HDB</option>
+          <option value="hdb4" selected>4-room HDB</option>
+          <option value="hdb5">5-room HDB</option>
+          <option value="private">private</option>
+        </select>.
+      </p>
+    </section>
+
+    <section class="moment" id="support">
+      <h2><span class="step-num">03</span>What the Budget gives back</h2>
+      <p>For your housing type and income band, the headline support package is roughly the following each year:</p>
+      <ul class="scheme-list">
+        <li><strong>CDC vouchers</strong> — <span class="rnum" data-bind="cdc">S$400</span>, household-level, redeemable at supermarkets and hawkers.</li>
+        <li><strong>GSTV + U-Save</strong> — about <span class="rnum" data-bind="gst">S$880</span> combined; helps with utilities and offsets GST for lower-income households.</li>
+        <li><strong>Transport top-ups</strong> — modelled here as a flat <span class="rnum" data-bind="tr">S$200</span> per year.</li>
+      </ul>
+      <p>That comes to <span class="rnum" data-bind="annual">S$1,480</span> a year, or <span class="rnum" data-bind="s0">S$123</span> a month spread evenly.</p>
+      <p class="footnote">Scheme amounts are 2025-approximate teaching figures, not official MOF numbers. Eligibility and actual payouts are set by the Government.</p>
+    </section>
+
+    <section class="moment" id="today">
+      <h2><span class="step-num">04</span>Today's picture</h2>
+      <p class="headline">Right now, that support covers about <span class="rnum" data-bind="red0">5.4%</span> of your monthly costs.</p>
+      <p>Your net burden — what you'd cover yourself after subsidies — is <span class="rnum" data-bind="b0">S$2,137</span> a month.</p>
+      <p class="aside">That percentage is just S(0) ÷ E(0): support divided by expenses, expressed as a percent. We track this <em>effectiveness</em> over the next ten years in the chart below.</p>
+    </section>
+
+    <section class="moment" id="years">
+      <h2><span class="step-num">05</span>What ten years does</h2>
+      <p>Two things move over time: prices rise and the Budget grows. At <span class="rnum" data-bind="i">3.0%</span> annual inflation and <span class="rnum" data-bind="s">1.0%</span> annual subsidy growth, the two curves separate — and because each year's rise compounds on the previous one, the gap widens faster than the rates alone suggest. A 3% rate doesn't add 30% after a decade; it adds about 34%.</p>
+      <div class="chart-wrap" id="chart-main" aria-label="Monthly expenses versus support over ten years"></div>
+      <p class="caption">At your effectiveness threshold of <span class="rnum" data-bind="tau">5%</span>, <span id="cross-narrative">…</span></p>
+    </section>
+
+    <section class="moment" id="across">
+      <h2><span class="step-num">06</span>Across income groups</h2>
+      <p>Low-income households start with the largest proportional support — but the curve they sit on declines at a similar rate. The chart shows subsidy effectiveness (support as a percent of expenses) over ten years for each band, holding your housing type and the rates above constant.</p>
+      <div class="chart-wrap" id="chart-compare" aria-label="Reduction percent across income groups over ten years"></div>
+      <p class="caption" id="caption-compare">…</p>
+    </section>
+
+    <section class="moment" id="model">
+      <h2><span class="step-num">07</span>The model, if you want it</h2>
+      <p>The whole page is four short equations. Everything else is a way of seeing them.</p>
+      <details class="model-coda">
+        <summary>Show the maths</summary>
+        <div class="maths">
+          <p>Expenditure and support both compound annually:</p>
+          <p class="f">E(n) = E(0) · (1 + i)<sup>n</sup><br />S(n) = S(0) · (1 + s)<sup>n</sup></p>
+          <p>The net burden is their difference, and effectiveness is the ratio:</p>
+          <p class="f">B(n) = E(n) − S(n)<br />reduction(n) = 100 · S(n) / E(n)</p>
+          <p>Year-on-year change in burden:</p>
+          <p class="f">ΔB(n) = E(0)(1+i)<sup>n−1</sup> · i  −  S(0)(1+s)<sup>n−1</sup> · s</p>
+          <p>The threshold year — the first <em>n</em> at which reduction drops below τ — has a closed form when inflation outruns subsidy growth (<em>i</em> &gt; <em>s</em>):</p>
+          <p class="f">n* = ⌈ ln(τ · E(0) / (100 · S(0))) / ln((1+s)/(1+i)) ⌉</p>
+          <p>When <em>i</em> ≤ <em>s</em>, the ratio S(n)/E(n) is non-decreasing and no such year exists.</p>
+        </div>
+      </details>
+    </section>
+
+    <footer>
+      <p>Illustrative model, not financial advice. Singapore Budget scheme amounts are 2025-approximate.</p>
+      <p class="links">
+        <a href="#" id="csv-link">Download projection (CSV)</a>
+        <a href="#" id="print-link">Printable summary</a>
+      </p>
+    </footer>
+  </article>
+
+  <script>
+(function () {
+  "use strict";
+
+  // ---------- Model (math preserved from prior version) ----------
+
+  var CATEGORIES = [
+    { key: "food", label: "Food" },
+    { key: "transport", label: "Transport" },
+    { key: "utilities", label: "Utilities" },
+    { key: "education", label: "Education" },
+    { key: "healthcare", label: "Healthcare" },
+    { key: "misc", label: "Miscellaneous" }
+  ];
+
+  var BASE_MONTHLY = {
+    low:    { food: 480, transport: 320, utilities: 110, education: 140, healthcare: 160, misc: 340 },
+    middle: { food: 620, transport: 420, utilities: 160, education: 280, healthcare: 260, misc: 520 },
+    high:   { food: 820, transport: 620, utilities: 240, education: 520, healthcare: 420, misc: 780 }
+  };
+
+  var HOUSING_MULT = {
+    hdb12: { food: 1, transport: 0.92, utilities: 0.95, education: 1, healthcare: 1, misc: 0.95 },
+    hdb3:  { food: 1, transport: 1, utilities: 1, education: 1.02, healthcare: 1, misc: 1 },
+    hdb4:  { food: 1, transport: 1.02, utilities: 1.02, education: 1.03, healthcare: 1.02, misc: 1.02 },
+    hdb5:  { food: 1.03, transport: 1.05, utilities: 1.05, education: 1.05, healthcare: 1.03, misc: 1.05 },
+    private:{ food: 1.08, transport: 1.2, utilities: 1.15, education: 1.1, healthcare: 1.08, misc: 1.15 }
+  };
+
+  function sizeScale(key, size) {
+    var s = size;
+    if (key === "food" || key === "education") return 0.55 + 0.225 * s;
+    if (key === "transport") return 0.7 + 0.1 * s;
+    if (key === "utilities") return 0.65 + 0.12 * s;
+    if (key === "healthcare") return 0.75 + 0.1 * s;
+    return 0.7 + 0.1 * s;
+  }
+
+  function defaultExpenses(income, size, housing) {
+    var base = BASE_MONTHLY[income];
+    var hm = HOUSING_MULT[housing];
+    var out = {};
+    CATEGORIES.forEach(function (c) {
+      out[c.key] = Math.round(base[c.key] * sizeScale(c.key, size) * hm[c.key]);
+    });
+    return out;
+  }
+
+  function cdcAnnual(housing) {
+    if (housing === "hdb12") return 500;
+    if (housing === "hdb3" || housing === "hdb4") return 400;
+    if (housing === "hdb5") return 300;
+    return 200;
+  }
+  function usaveAnnual(housing) {
+    if (housing === "private") return 0;
+    if (housing === "hdb12") return 760;
+    if (housing === "hdb3") return 680;
+    if (housing === "hdb4") return 600;
+    return 520;
+  }
+  function gstCashAnnual(income, housing) {
+    var tier = { low: 320, middle: 200, high: 100 };
+    if (housing === "private") return tier[income] + 80;
+    return tier[income];
+  }
+  var TRANSPORT_ANNUAL = 200;
+
+  function annualSupport(housing, income) {
+    var cdc = cdcAnnual(housing);
+    var usave = usaveAnnual(housing);
+    var gst = gstCashAnnual(income, housing);
+    return {
+      cdc: cdc,
+      usaveGst: usave + gst,
+      transport: TRANSPORT_ANNUAL,
+      total: cdc + usave + gst + TRANSPORT_ANNUAL
+    };
+  }
+
+  function classifyPCHI(pchi) {
+    if (pchi <= 1500) return "low";
+    if (pchi <= 5000) return "middle";
+    return "high";
+  }
+
+  function computeSeries(E0, S0, i, s, years) {
+    var rows = [];
+    for (var n = 0; n <= years; n++) {
+      var En = E0 * Math.pow(1 + i, n);
+      var Sn = S0 * Math.pow(1 + s, n);
+      var Bn = En - Sn;
+      var red = En > 0 ? (Sn / En) * 100 : 0;
+      var deltaB = n === 0 ? null : Bn - rows[n - 1].B;
+      rows.push({ n: n, E: En, S: Sn, B: Bn, red: red, deltaB: deltaB });
+    }
+    return rows;
+  }
+
+  function crossoverYear(rows, tau) {
+    for (var k = 1; k < rows.length; k++) {
+      if (rows[k].red < tau) return rows[k].n;
+    }
+    return null;
+  }
+
+  // ---------- State ----------
+
+  var state = {
+    income: 8000,
+    persons: 2,
+    housing: "hdb4",
+    expenses: null,
+    manualBasket: false,
+    i: 0.03,
+    s: 0.01,
+    tau: 5
+  };
+
+  function classFromState() {
+    var pchi = state.persons > 0 ? state.income / state.persons : 0;
+    return classifyPCHI(pchi);
+  }
+
+  state.expenses = defaultExpenses(classFromState(), state.persons, state.housing);
+
+  var lastRows = null;
+  var lastMeta = null;
+
+  // ---------- Formatting ----------
+
+  function fmtMoney(n) {
+    if (!isFinite(n)) return "S$0";
+    return "S$" + Math.round(n).toLocaleString("en-SG");
+  }
+  function fmtPct(n) {
+    if (!isFinite(n)) return "0%";
+    var rounded = Math.round(n * 10) / 10;
+    return rounded.toFixed(1) + "%";
+  }
+  function fmtRate(n) {
+    return (n * 100).toFixed(1) + "%";
+  }
+
+  // ---------- DOM helpers ----------
+
+  function el(id) { return document.getElementById(id); }
+  function rb(name) { return document.querySelector('[data-bind="' + name + '"]'); }
+
+  function setText(el, str) {
+    if (!el) return;
+    if (el.textContent !== str) {
+      el.textContent = str;
+      el.classList.add("flash");
+      // Use rAF to ensure the class change repaints, then remove on next frame batch
+      window.setTimeout(function () { el.classList.remove("flash"); }, 220);
+    }
+  }
+
+  // ---------- Inline drag-number (reactive numeral) ----------
+
+  function makeDragNumber(el, opts) {
+    if (!el || el.dataset.bound === "1") return;
+    el.dataset.bound = "1";
+    el.classList.add("editable");
+    el.setAttribute("tabindex", "0");
+    el.setAttribute("role", "spinbutton");
+    el.setAttribute("aria-valuemin", String(opts.min));
+    el.setAttribute("aria-valuemax", String(opts.max));
+
+    function snap(v) {
+      var c = Math.max(opts.min, Math.min(opts.max, v));
+      var stepped = Math.round(c / opts.step) * opts.step;
+      // Avoid FP drift on small steps:
+      var decimals = (opts.step.toString().split(".")[1] || "").length;
+      if (decimals > 0) stepped = parseFloat(stepped.toFixed(decimals));
+      return stepped;
+    }
+
+    function commit(v) {
+      var snapped = snap(v);
+      opts.set(snapped);
+      el.setAttribute("aria-valuenow", String(snapped));
+      el.setAttribute("aria-valuetext", opts.format(snapped));
+      refresh();
+    }
+
+    var dragging = false;
+    var startX = 0;
+    var startVal = 0;
+    var pid = null;
+
+    el.addEventListener("pointerdown", function (e) {
+      if (e.button !== undefined && e.button !== 0) return;
+      dragging = true;
+      pid = e.pointerId;
+      startX = e.clientX;
+      startVal = opts.get();
+      try { el.setPointerCapture(e.pointerId); } catch (err) {}
+      el.classList.add("dragging");
+      e.preventDefault();
+    });
+    el.addEventListener("pointermove", function (e) {
+      if (!dragging) return;
+      var dx = e.clientX - startX;
+      var pxPerStep = opts.pxPerStep || 4;
+      var deltaSteps = dx / pxPerStep;
+      commit(startVal + deltaSteps * opts.step);
+    });
+    function endDrag() {
+      if (!dragging) return;
+      dragging = false;
+      try { if (pid !== null) el.releasePointerCapture(pid); } catch (err) {}
+      el.classList.remove("dragging");
+    }
+    el.addEventListener("pointerup", endDrag);
+    el.addEventListener("pointercancel", endDrag);
+    el.addEventListener("lostpointercapture", endDrag);
+
+    el.addEventListener("keydown", function (e) {
+      var v = opts.get();
+      var big = opts.step * 10;
+      var handled = true;
+      if (e.key === "ArrowRight" || e.key === "ArrowUp") {
+        commit(v + (e.shiftKey ? big : opts.step));
+      } else if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
+        commit(v - (e.shiftKey ? big : opts.step));
+      } else if (e.key === "Home") {
+        commit(opts.min);
+      } else if (e.key === "End") {
+        commit(opts.max);
+      } else if (e.key === "PageUp") {
+        commit(v + big);
+      } else if (e.key === "PageDown") {
+        commit(v - big);
+      } else {
+        handled = false;
+      }
+      if (handled) e.preventDefault();
+    });
+
+    // Initialise aria
+    var v0 = opts.get();
+    el.setAttribute("aria-valuenow", String(v0));
+    el.setAttribute("aria-valuetext", opts.format(v0));
+  }
+
+  // ---------- Refresh ----------
+
+  function refresh() {
+    var cls = classFromState();
+    var pchi = state.persons > 0 ? state.income / state.persons : 0;
+
+    setText(rb("income"), fmtMoney(state.income));
+    setText(rb("persons"), String(state.persons));
+    setText(rb("pchi"), fmtMoney(pchi));
+    setText(rb("class-label"), cls);
+
+    if (!state.manualBasket) {
+      state.expenses = defaultExpenses(cls, state.persons, state.housing);
+    }
+
+    var E0 = 0;
+    CATEGORIES.forEach(function (c) {
+      E0 += state.expenses[c.key];
+      setText(rb(c.key), fmtMoney(state.expenses[c.key]));
+    });
+    setText(rb("e0"), fmtMoney(E0));
+
+    var sup = annualSupport(state.housing, cls);
+    setText(rb("cdc"), fmtMoney(sup.cdc));
+    setText(rb("gst"), fmtMoney(sup.usaveGst));
+    setText(rb("tr"), fmtMoney(sup.transport));
+    setText(rb("annual"), fmtMoney(sup.total));
+    var S0 = sup.total / 12;
+    setText(rb("s0"), fmtMoney(S0));
+
+    var red0 = E0 > 0 ? (S0 / E0) * 100 : 0;
+    setText(rb("red0"), fmtPct(red0));
+    setText(rb("b0"), fmtMoney(Math.max(0, E0 - S0)));
+
+    setText(rb("i"), fmtRate(state.i));
+    setText(rb("s"), fmtRate(state.s));
+    setText(rb("tau"), (Math.round(state.tau * 10) / 10).toFixed(1).replace(/\.0$/, "") + "%");
+
+    var rows = computeSeries(E0, S0, state.i, state.s, 10);
+    var cross = crossoverYear(rows, state.tau);
+    renderMainChart(rows, cross);
+
+    var narrative = el("cross-narrative");
+    if (cross === null) {
+      narrative.innerHTML = "support effectiveness stays above the threshold through year 10.";
+    } else {
+      narrative.innerHTML = 'effectiveness drops below it in year <strong>' + cross + '</strong>.';
+    }
+
+    renderCompareChart();
+
+    lastRows = rows;
+    lastMeta = {
+      E0: E0, S0: S0, i: state.i, s: state.s,
+      income: cls, housing: state.housing, size: state.persons
+    };
+  }
+
+  // ---------- SVG charts ----------
+
+  function renderMainChart(rows, crossYear) {
+    var W = 640, H = 280;
+    var padL = 56, padR = 90, padT = 28, padB = 38;
+    var n = rows.length;
+    var maxV = 0;
+    rows.forEach(function (r) {
+      if (r.E > maxV) maxV = r.E;
+      if (r.S > maxV) maxV = r.S;
+    });
+    if (maxV <= 0) maxV = 1;
+    // Round up to a clean number for the y-axis label
+    var niceMax = niceCeil(maxV);
+
+    function x(i) { return padL + (i / (n - 1)) * (W - padL - padR); }
+    function y(v) { return padT + (1 - v / niceMax) * (H - padT - padB); }
+
+    function path(arr) {
+      return "M" + arr.map(function (r, i) { return x(i).toFixed(1) + "," + y(r).toFixed(1); }).join(" L");
+    }
+
+    var ePath = path(rows.map(function (r) { return r.E; }));
+    var sPath = path(rows.map(function (r) { return r.S; }));
+
+    var xTicks = [0, 2, 4, 6, 8, 10].map(function (i) {
+      return '<text x="' + x(i).toFixed(1) + '" y="' + (H - padB + 18) + '" text-anchor="middle" class="ax">Y' + i + '</text>';
+    }).join("");
+
+    var yTicks =
+      '<text x="' + (padL - 8) + '" y="' + (y(niceMax) + 4) + '" text-anchor="end" class="ax">' + fmtMoney(niceMax) + '</text>' +
+      '<text x="' + (padL - 8) + '" y="' + (y(0) + 4) + '" text-anchor="end" class="ax">S$0</text>';
+
+    var crossMarker = "";
+    if (crossYear !== null && crossYear >= 0 && crossYear <= 10) {
+      var cx = x(crossYear);
+      crossMarker =
+        '<line x1="' + cx.toFixed(1) + '" y1="' + padT + '" x2="' + cx.toFixed(1) + '" y2="' + (H - padB) + '" class="cross-line" />' +
+        '<text x="' + cx.toFixed(1) + '" y="' + (padT - 8) + '" text-anchor="middle" class="cross-label">crosses τ · Y' + crossYear + '</text>';
+    }
+
+    var lastE = rows[rows.length - 1].E;
+    var lastS = rows[rows.length - 1].S;
+    var labelX = W - padR + 8;
+    var endLabels =
+      '<text x="' + labelX + '" y="' + (y(lastE) + 4) + '" class="end-label end-e">E(10) ' + fmtMoney(lastE) + '</text>' +
+      '<text x="' + labelX + '" y="' + (y(lastS) + 4) + '" class="end-label end-s">S(10) ' + fmtMoney(lastS) + '</text>';
+
+    var svg =
+      '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img">' +
+      '<style>' +
+        '.line-e { fill: none; stroke: #B91C1C; stroke-width: 2; }' +
+        '.line-s { fill: none; stroke: #111; stroke-width: 2; }' +
+        '.ax { font: 11px var(--sans, sans-serif); fill: #6B7280; }' +
+        '.end-label { font: 11px var(--sans, sans-serif); }' +
+        '.end-e { fill: #B91C1C; font-weight: 600; }' +
+        '.end-s { fill: #111; font-weight: 600; }' +
+        '.cross-line { stroke: #B91C1C; stroke-width: 1; stroke-dasharray: 3 4; opacity: 0.55; }' +
+        '.cross-label { font: 11px var(--sans, sans-serif); fill: #B91C1C; font-weight: 600; }' +
+        '.baseline { stroke: #E7E5E0; stroke-width: 1; }' +
+      '</style>' +
+      '<line x1="' + padL + '" y1="' + y(0) + '" x2="' + (W - padR) + '" y2="' + y(0) + '" class="baseline" />' +
+      yTicks + xTicks +
+      crossMarker +
+      '<path d="' + sPath + '" class="line-s" />' +
+      '<path d="' + ePath + '" class="line-e" />' +
+      endLabels +
+      '</svg>';
+    el("chart-main").innerHTML = svg;
+  }
+
+  function niceCeil(v) {
+    if (v <= 0) return 1;
+    var mag = Math.pow(10, Math.floor(Math.log10(v)));
+    var n = v / mag;
+    var nice;
+    if (n <= 1) nice = 1;
+    else if (n <= 2) nice = 2;
+    else if (n <= 2.5) nice = 2.5;
+    else if (n <= 5) nice = 5;
+    else nice = 10;
+    return nice * mag;
+  }
+
+  function renderCompareChart() {
+    var W = 560, H = 220;
+    var padL = 48, padR = 60, padT = 16, padB = 32;
+    var groups = [
+      { id: "low", color: "#B91C1C", label: "Low" },
+      { id: "middle", color: "#111", label: "Middle" },
+      { id: "high", color: "#6B7280", label: "High" }
+    ];
+    var allRows = {};
+    var maxRed = 0;
+    groups.forEach(function (g) {
+      var exp = defaultExpenses(g.id, state.persons, state.housing);
+      var E0 = 0;
+      CATEGORIES.forEach(function (c) { E0 += exp[c.key]; });
+      var sup = annualSupport(state.housing, g.id);
+      var S0 = sup.total / 12;
+      var rows = computeSeries(E0, S0, state.i, state.s, 10);
+      allRows[g.id] = rows;
+      rows.forEach(function (r) { if (r.red > maxRed) maxRed = r.red; });
+    });
+    if (maxRed <= 0) maxRed = 1;
+    var niceMax = niceCeil(maxRed);
+    var n = 11;
+    function x(i) { return padL + (i / (n - 1)) * (W - padL - padR); }
+    function y(v) { return padT + (1 - v / niceMax) * (H - padT - padB); }
+
+    var paths = groups.map(function (g) {
+      var rows = allRows[g.id];
+      var d = "M" + rows.map(function (r, i) { return x(i).toFixed(1) + "," + y(r.red).toFixed(1); }).join(" L");
+      return '<path d="' + d + '" fill="none" stroke="' + g.color + '" stroke-width="1.6" />';
+    }).join("");
+
+    var labels = groups.map(function (g) {
+      var rows = allRows[g.id];
+      var lastY = y(rows[rows.length - 1].red);
+      return '<text x="' + (W - padR + 6) + '" y="' + (lastY + 4) + '" class="cmp-label" style="fill:' + g.color + '">' + g.label + ' ' + rows[rows.length - 1].red.toFixed(1) + '%</text>';
+    }).join("");
+
+    var xTicks = [0, 5, 10].map(function (i) {
+      return '<text x="' + x(i).toFixed(1) + '" y="' + (H - padB + 16) + '" text-anchor="middle" class="ax">Y' + i + '</text>';
+    }).join("");
+    var yTicks =
+      '<text x="' + (padL - 6) + '" y="' + (y(niceMax) + 4) + '" text-anchor="end" class="ax">' + niceMax.toFixed(0) + '%</text>' +
+      '<text x="' + (padL - 6) + '" y="' + (y(0) + 4) + '" text-anchor="end" class="ax">0%</text>';
+
+    var svg =
+      '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img">' +
+      '<style>' +
+        '.ax { font: 10px var(--sans, sans-serif); fill: #6B7280; }' +
+        '.cmp-label { font: 11px var(--sans, sans-serif); font-weight: 600; }' +
+        '.baseline { stroke: #E7E5E0; stroke-width: 1; }' +
+      '</style>' +
+      '<line x1="' + padL + '" y1="' + y(0) + '" x2="' + (W - padR) + '" y2="' + y(0) + '" class="baseline" />' +
+      yTicks + xTicks + paths + labels +
+      '</svg>';
+    el("chart-compare").innerHTML = svg;
+
+    var y1 = {}, y10 = {};
+    groups.forEach(function (g) {
+      y1[g.id] = allRows[g.id][1].red;
+      y10[g.id] = allRows[g.id][10].red;
+    });
+    var steepest = groups.reduce(function (a, b) {
+      var da = y1[a.id] - y10[a.id];
+      var db = y1[b.id] - y10[b.id];
+      return da >= db ? a : b;
+    });
+    var drop = y1[steepest.id] - y10[steepest.id];
+    el("caption-compare").innerHTML =
+      "Steepest erosion over ten years: <strong>" + steepest.label.toLowerCase() + "-income</strong> households, dropping " +
+      drop.toFixed(1) + " percentage points.";
+  }
+
+  // ---------- Wiring ----------
+
+  function wireIncomeSlider() {
+    var slider = el("income-range");
+    slider.value = state.income;
+    slider.addEventListener("input", function () {
+      state.income = parseInt(slider.value, 10) || 0;
+      refresh();
+    });
+  }
+
+  function wireIncomeNumber() {
+    makeDragNumber(rb("income"), {
+      min: 0, max: 100000, step: 500, pxPerStep: 0.35,
+      get: function () { return state.income; },
+      set: function (v) {
+        state.income = v;
+        el("income-range").value = v;
+      },
+      format: function (v) { return fmtMoney(v) + " per month"; }
+    });
+  }
+
+  function wirePersons() {
+    makeDragNumber(rb("persons"), {
+      min: 1, max: 8, step: 1, pxPerStep: 14,
+      get: function () { return state.persons; },
+      set: function (v) { state.persons = v; },
+      format: function (v) { return v + " in household"; }
+    });
+  }
+
+  function wireExpenses() {
+    CATEGORIES.forEach(function (c) {
+      makeDragNumber(rb(c.key), {
+        min: 0, max: 10000, step: 10, pxPerStep: 1.2,
+        get: function () { return state.expenses[c.key]; },
+        set: function (v) {
+          state.expenses[c.key] = v;
+          state.manualBasket = true;
+        },
+        format: function (v) { return fmtMoney(v) + " on " + c.label.toLowerCase(); }
+      });
+    });
+  }
+
+  function wireRates() {
+    makeDragNumber(rb("i"), {
+      min: 0, max: 0.15, step: 0.001, pxPerStep: 6,
+      get: function () { return state.i; },
+      set: function (v) { state.i = v; },
+      format: function (v) { return fmtRate(v) + " inflation"; }
+    });
+    makeDragNumber(rb("s"), {
+      min: 0, max: 0.15, step: 0.001, pxPerStep: 6,
+      get: function () { return state.s; },
+      set: function (v) { state.s = v; },
+      format: function (v) { return fmtRate(v) + " subsidy growth"; }
+    });
+    makeDragNumber(rb("tau"), {
+      min: 0, max: 100, step: 0.5, pxPerStep: 3,
+      get: function () { return state.tau; },
+      set: function (v) { state.tau = v; },
+      format: function (v) { return v + " percent threshold"; }
+    });
+  }
+
+  function wireHousing() {
+    var sel = el("housing");
+    sel.value = state.housing;
+    sel.addEventListener("change", function () {
+      state.housing = sel.value;
+      state.manualBasket = false;
+      refresh();
+    });
+  }
+
+  function wireExport() {
+    el("csv-link").addEventListener("click", function (e) {
+      e.preventDefault();
+      if (!lastRows) return;
+      var lines = [["Year n", "E(n) monthly", "S(n) monthly", "B(n)", "Reduction %", "Delta B"]];
+      lastRows.forEach(function (r) {
+        lines.push([
+          r.n,
+          Math.round(r.E * 100) / 100,
+          Math.round(r.S * 100) / 100,
+          Math.round(r.B * 100) / 100,
+          Math.round(r.red * 100) / 100,
+          r.deltaB === null ? "" : Math.round(r.deltaB * 100) / 100
+        ]);
+      });
+      var csv = lines.map(function (row) {
+        return row.map(function (v) {
+          if (typeof v === "string" && (v.indexOf(",") >= 0 || v.indexOf('"') >= 0)) {
+            return '"' + v.replace(/"/g, '""') + '"';
+          }
+          return v;
+        }).join(",");
+      }).join("\n");
+      var blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "col-projection.csv";
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    el("print-link").addEventListener("click", function (e) {
+      e.preventDefault();
+      if (!lastMeta || !lastRows) return;
+      var m = lastMeta;
+      var tableRows = lastRows.map(function (r) {
+        return "<tr><td>" + r.n + "</td><td>" + fmtMoney(r.E) + "</td><td>" + fmtMoney(r.S) + "</td><td>" + fmtMoney(r.B) + "</td><td>" + r.red.toFixed(2) + "%</td><td>" +
+          (r.deltaB === null ? "—" : fmtMoney(r.deltaB)) + "</td></tr>";
+      }).join("");
+      var w = window.open("", "_blank");
+      if (!w) {
+        alert("Pop-up blocked. Allow pop-ups to open the printable summary.");
+        return;
+      }
+      w.document.write(
+        "<!DOCTYPE html><html><head><meta charset='utf-8'><title>Cost-of-Living Projection</title>" +
+        "<style>" +
+        "body{font-family:Charter,Georgia,serif;color:#111;background:#FAFAF7;max-width:44rem;margin:2rem auto;padding:0 1.5rem 3rem;line-height:1.65;font-size:16px;}" +
+        "h1{font-family:-apple-system,system-ui,sans-serif;font-weight:600;font-size:1.5rem;letter-spacing:-0.01em;margin:0 0 0.5rem;}" +
+        ".kicker{font-family:-apple-system,system-ui,sans-serif;font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;color:#6B7280;margin:0 0 0.5rem;}" +
+        ".meta{color:#6B7280;font-size:0.92rem;margin:1rem 0 1.5rem;}" +
+        "table{width:100%;border-collapse:collapse;font-family:ui-monospace,Menlo,monospace;font-size:0.85rem;margin-top:1rem;}" +
+        "th,td{padding:0.4rem 0.6rem;border-bottom:1px solid #E7E5E0;text-align:right;}" +
+        "th:first-child,td:first-child{text-align:left;}" +
+        "th{color:#6B7280;font-weight:600;font-size:0.74rem;text-transform:uppercase;letter-spacing:0.08em;border-bottom-width:2px;}" +
+        "button{font:inherit;padding:0.5rem 1rem;margin-top:1.5rem;background:#111;color:#FAFAF7;border:none;border-radius:4px;cursor:pointer;}" +
+        "@media print { button { display:none; } body { background:#fff; } }" +
+        "</style></head><body>" +
+        "<p class='kicker'>Cost-of-living projection</p>" +
+        "<h1>" + (m.income.charAt(0).toUpperCase() + m.income.slice(1)) + "-income household, " + m.size + " persons</h1>" +
+        "<p class='meta'>Housing: " + m.housing + ". Starting expenses E(0) = " + fmtMoney(m.E0) + " per month, support S(0) = " + fmtMoney(m.S0) + " per month. " +
+        "Annual inflation i = " + fmtRate(m.i) + ", subsidy growth s = " + fmtRate(m.s) + ".</p>" +
+        "<table><thead><tr><th>Year</th><th>E(n)</th><th>S(n)</th><th>B(n)</th><th>Reduction %</th><th>ΔB</th></tr></thead><tbody>" +
+        tableRows +
+        "</tbody></table>" +
+        "<button onclick='window.print()'>Print this page</button>" +
+        "</body></html>"
+      );
+      w.document.close();
+    });
+  }
+
+  // ---------- Boot ----------
+
+  wireIncomeSlider();
+  wireIncomeNumber();
+  wirePersons();
+  wireExpenses();
+  wireRates();
+  wireHousing();
+  wireExport();
+  refresh();
+})();
+  </script>
+</body>
+</html>
