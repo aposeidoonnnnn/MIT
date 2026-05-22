@@ -354,67 +354,6 @@
       letter-spacing: 0.14em;
     }
 
-    .sub-h3 {
-      font-family: var(--sans);
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin: 2rem 0 0.85rem;
-    }
-    .methodology-list {
-      padding-left: 1.3rem;
-      margin: 0.5rem 0 1.5rem;
-    }
-    .methodology-list li {
-      margin-bottom: 0.85rem;
-      font-size: 0.97rem;
-      line-height: 1.6;
-    }
-    .methodology-list li strong {
-      font-family: var(--sans);
-      font-weight: 600;
-      font-size: 0.95em;
-    }
-    .methodology-list a {
-      color: var(--text);
-      text-decoration: none;
-      border-bottom: 1px dotted var(--muted);
-      transition: color 200ms ease, border-color 200ms ease;
-    }
-    .methodology-list a:hover {
-      color: var(--accent);
-      border-bottom-color: var(--accent);
-      border-bottom-style: solid;
-    }
-
-    .cite-block {
-      background: var(--soft);
-      border-radius: 6px;
-      padding: 1rem 1.2rem;
-      margin: 0.85rem 0 1.25rem;
-    }
-    .cite-plain {
-      font-family: var(--serif);
-      font-size: 0.95rem;
-      margin: 0 0 0.85rem;
-      color: var(--text);
-    }
-    .cite-bibtex {
-      font-family: var(--mono);
-      font-size: 0.82rem;
-      background: var(--card-bg);
-      border: 1px solid var(--rule);
-      border-radius: 4px;
-      padding: 0.7rem 0.85rem;
-      margin: 0;
-      white-space: pre;
-      overflow-x: auto;
-      color: var(--text);
-      line-height: 1.5;
-    }
-
     /* ===== Share button + toast ===== */
     .share-row {
       display: flex;
@@ -986,8 +925,6 @@
         page-break-inside: avoid;
       }
       .moment#question,
-      .moment#findings,
-      .moment#methodology,
       .moment#model {
         page-break-before: auto;
       }
@@ -1020,7 +957,7 @@
         opacity: 1 !important;
         transform: none !important;
       }
-      .maths .f, .cite-bibtex {
+      .maths .f {
         background: #f4f4f4 !important;
         border: 1px solid #cccccc !important;
       }
@@ -1062,8 +999,6 @@
       <li><a href="#years" data-target="years">05 · Ten-year projection</a></li>
       <li><a href="#across" data-target="across">06 · Across income groups</a></li>
       <li><a href="#model" data-target="model">07 · Mathematical model</a></li>
-      <li><a href="#findings" data-target="findings">Discussion</a></li>
-      <li><a href="#methodology" data-target="methodology">Methodology</a></li>
     </ul>
   </nav>
   <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Switch to dark mode" aria-pressed="false" title="Switch theme">
@@ -1218,58 +1153,6 @@
         <h3><span class="ix">★</span>Summary</h3>
         <p>Compounding gives you two rising curves. Their ratio decays geometrically when one rate beats the other. A single logarithm tells you when that ratio crosses any threshold you care about. Everything else on this page (every number, every chart, every caption) is one of those three quantities evaluated at some <em>n</em>.</p>
       </div>
-    </section>
-
-    <section class="moment" id="findings">
-      <h2 class="preface-heading">Discussion</h2>
-      <p>The structural finding is simple, and the page makes it visible: whenever inflation outruns subsidy growth (the typical case in any developed economy), the support effectiveness ratio S(n) ÷ E(n) erodes geometrically. Not linearly. Not at a rate you can dismiss by quoting last year's headline number. The decay factor is exactly (1 + s) ÷ (1 + i), and it compounds on itself each year.</p>
-      <p>What this page is not: a forecast. The expense baselines are synthetic teaching values, not households surveyed by SingStat; the support figures are 2025-approximate, not what any specific household actually receives; the model ignores behavioural responses, in-kind subsidies (subsidised polyclinic visits, HDB grants, education vouchers) and the dozens of smaller schemes that round out a real Budget package. Real cost-of-living arithmetic is messier than two compounding curves.</p>
-      <p>What would actually change the picture? Four levers fall out of the maths directly: raise <em>s</em> so it matches or exceeds <em>i</em>; index each scheme to the CPI so <em>s</em> tracks <em>i</em> automatically; broaden the eligible expense basket so a larger fraction of E(n) is reached by support; or shift from cash transfers to subsidised provision, where the price paid by households moves with the subsidy rather than the market. Different levers carry different fiscal and political costs. The model doesn't pick one, but it does make the tradeoff visible.</p>
-    </section>
-
-    <section class="moment" id="methodology">
-      <h2 class="preface-heading">Methodology &amp; sources</h2>
-      <p>This page is a teaching artifact, not an official tool. Every number is reproducible from the source code, which is a single self-contained HTML file with no external dependencies.</p>
-
-      <h3 class="sub-h3">Where the numbers come from</h3>
-      <ul class="methodology-list">
-        <li><strong>Expense baselines</strong> (section 2): synthetic, structured loosely after SingStat's <em>Household Expenditure Survey</em> bands. Each baseline is the monthly amount for a reference two-person household; the page then scales by household size and applies a small housing-type multiplier. Treat as illustrative; your real basket is the one you measure yourself.</li>
-        <li><strong>CDC voucher amounts</strong> (section 3): 2025-approximate, tiered by housing type. The model uses S$500 / S$400 / S$300 / S$200 for 1–2-room, 3–4-room, 5-room HDB and private respectively.</li>
-        <li><strong>GST Voucher and U-Save</strong>: an approximate annualised bundle, tiered by income band and housing type. Real eligibility and payouts depend on per-capita household income, age, and assessable income, all of which are set by the Government in each Budget.</li>
-        <li><strong>Transport top-ups</strong>: modelled as a flat S$200 per year per household for illustrative simplicity. The actual schemes are more granular and means-tested.</li>
-        <li><strong>PCHI thresholds</strong>: S$1,500 and S$5,000, the cutoffs used by several MSF and Singapore Budget programmes for the "low" and "high" boundaries. Both have moved over time and may move again.</li>
-        <li><strong>Inflation default (3.0%)</strong>: roughly aligned with Singapore's <em>headline</em> CPI in recent years. The actual MAS Core Inflation differs and is the typical reference for policy. Move the slider and watch what changes.</li>
-        <li><strong>Subsidy growth default (1.0%)</strong>: a placeholder. The Singapore Budget does not commit to a fixed annual escalation; each year's enhancements are announced in the Budget speech. The default exists so the page has a starting state.</li>
-      </ul>
-
-      <h3 class="sub-h3">Assumptions worth flagging</h3>
-      <ul class="methodology-list">
-        <li>Both E(n) and S(n) follow pure geometric growth at fixed rates. Real inflation is volatile; the model trades realism for clarity.</li>
-        <li>The household's basket is held constant in real terms; there is no substitution toward cheaper goods as prices rise.</li>
-        <li>Support is treated as cash-equivalent. In-kind benefits (subsidised healthcare, education, housing) are deliberately out of scope.</li>
-        <li>The 10-year horizon is a teaching choice. Beyond ten years the geometric drift dominates anything else; for the qualitative point that's sufficient.</li>
-      </ul>
-
-      <h3 class="sub-h3">Reference reading</h3>
-      <ul class="methodology-list">
-        <li>Singapore Budget 2025 (<a href="https://www.mof.gov.sg/singaporebudget" rel="noopener">mof.gov.sg/singaporebudget</a>): primary source for current scheme amounts.</li>
-        <li>SingStat (<a href="https://www.singstat.gov.sg" rel="noopener">singstat.gov.sg</a>): Household Expenditure Survey, CPI, and household income distribution.</li>
-        <li>Ministry of Social and Family Development (<a href="https://www.msf.gov.sg" rel="noopener">msf.gov.sg</a>): PCHI definitions and eligibility frameworks.</li>
-        <li>Monetary Authority of Singapore (<a href="https://www.mas.gov.sg" rel="noopener">mas.gov.sg</a>): headline and core inflation series.</li>
-      </ul>
-
-      <h3 class="sub-h3">How to cite</h3>
-      <div class="cite-block">
-        <p class="cite-plain">A model by the reader, “How much of your bills does the Singapore Budget actually cover?”, 21 May 2026. Interactive essay.</p>
-        <pre class="cite-bibtex">@misc{cost_of_living_sg_2026,
-  title  = {How much of your bills does the Singapore Budget actually cover?},
-  author = {A model by the reader},
-  year   = {2026},
-  note   = {Interactive essay},
-}</pre>
-      </div>
-
-      <p class="aside">Last updated <time datetime="2026-05-21">21 May 2026</time>. Source: this page. Found a mistake or want to extend the model? The whole thing is one self-contained HTML file.</p>
     </section>
 
     <footer>
