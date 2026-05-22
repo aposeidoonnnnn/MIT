@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <style>
+      .bg { fill: #FAFAF7; }
+      .h1 { font-family: Charter, Cambria, Georgia, serif; font-size: 50px; font-weight: 600; fill: #111; letter-spacing: -0.018em; }
+      .kicker { font-family: -apple-system, "Helvetica Neue", system-ui, sans-serif; font-size: 17px; font-weight: 600; letter-spacing: 4px; fill: #6B7280; }
+      .byline { font-family: -apple-system, "Helvetica Neue", system-ui, sans-serif; font-size: 21px; fill: #6B7280; }
+      .url { font-family: -apple-system, "Helvetica Neue", system-ui, sans-serif; font-size: 17px; fill: #6B7280; letter-spacing: 0.03em; }
+      .ax { font-family: -apple-system, "Helvetica Neue", system-ui, sans-serif; font-size: 16px; fill: #6B7280; font-variant-numeric: tabular-nums; }
+      .label { font-family: -apple-system, "Helvetica Neue", system-ui, sans-serif; font-size: 19px; font-weight: 600; font-variant-numeric: tabular-nums; }
+      .label-e { fill: #B91C1C; }
+      .label-s { fill: #111; }
+      .line-e { fill: none; stroke: #B91C1C; stroke-width: 3.2; }
+      .line-s { fill: none; stroke: #111; stroke-width: 3.2; }
+      .baseline { stroke: #E7E5E0; stroke-width: 1.5; }
+      .cross-line { stroke: #B91C1C; stroke-width: 1.5; stroke-dasharray: 4 5; opacity: 0.55; }
+      .cross-label { font-family: -apple-system, "Helvetica Neue", system-ui, sans-serif; font-size: 14px; fill: #B91C1C; font-weight: 600; }
+      .footer-rule { stroke: #E7E5E0; stroke-width: 1; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1200" height="630"/>
+
+  <text class="kicker" x="80" y="85">SINGAPORE  ·  PUBLIC FINANCE  ·  INTERACTIVE</text>
+
+  <text class="h1" x="80" y="175">How much of your bills does the</text>
+  <text class="h1" x="80" y="240">Singapore Budget actually cover?</text>
+
+  <line class="baseline" x1="100" y1="490" x2="1100" y2="490"/>
+  <text class="ax" x="92" y="495" text-anchor="end">S$0</text>
+  <text class="ax" x="92" y="307" text-anchor="end">S$3K</text>
+  <text class="ax" x="100" y="514" text-anchor="middle">Y0</text>
+  <text class="ax" x="600" y="514" text-anchor="middle">Y5</text>
+  <text class="ax" x="1100" y="514" text-anchor="middle">Y10</text>
+
+  <line class="cross-line" x1="500" y1="247" x2="500" y2="490"/>
+  <text class="cross-label" x="500" y="237" text-anchor="middle">crosses 5% · Y4</text>
+
+  <path class="line-s" d="M 100 480 L 200 480 L 300 479.9 L 400 479.7 L 500 479.5 L 600 479.4 L 700 479.2 L 800 479.0 L 900 478.8 L 1000 478.6 L 1100 478.4"/>
+  <path class="line-e" d="M 100 309 L 200 304 L 300 299 L 400 293 L 500 287 L 600 281 L 700 274 L 800 268 L 900 261 L 1000 254 L 1100 247"/>
+
+  <text class="label label-e" x="1115" y="252">E  expenses</text>
+  <text class="label label-s" x="1115" y="483">S  support</text>
+
+  <line class="footer-rule" x1="80" y1="552" x2="1120" y2="552"/>
+  <text class="byline" x="80" y="585">A reactive essay. Drag the numbers as you read.</text>
+  <text class="url" x="80" y="612">Inflation outruns subsidy growth — and the gap compounds.</text>
+</svg>

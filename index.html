@@ -5,6 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>How much of your bills does the Singapore Budget actually cover?</title>
   <meta name="description" content="An interactive essay on cost of living, Budget support, and how the two diverge over ten years." />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="How much of your bills does the Singapore Budget actually cover?" />
+  <meta property="og:description" content="A reactive essay. Drag the numbers, watch ten years of inflation outrun ten years of subsidy growth." />
+  <meta property="og:image" content="share.svg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="en_SG" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="How much of your bills does the Singapore Budget actually cover?" />
+  <meta name="twitter:description" content="A reactive essay. Drag the numbers, watch ten years of inflation outrun ten years of subsidy growth." />
+  <meta name="twitter:image" content="share.svg" />
+  <meta name="theme-color" content="#FAFAF7" />
+  <script>
+    // Early theme set — runs before stylesheet paint to prevent flash-of-wrong-theme.
+    (function () {
+      try {
+        var stored = localStorage.getItem("col-theme");
+        var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        var theme = (stored === "light" || stored === "dark") ? stored : (prefersDark ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+        if (theme === "dark") {
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute("content", "#0F100E");
+        }
+      } catch (e) { /* ignore */ }
+    })();
+  </script>
   <style>
     :root {
       --bg: #FAFAF7;
@@ -13,9 +40,27 @@
       --accent: #B91C1C;
       --rule: #E7E5E0;
       --soft: rgba(0, 0, 0, 0.04);
+      --card-bg: #ffffff;
+      --tooltip-fg: #FAFAF7;
       --serif: "Source Serif 4", "Source Serif Pro", "Iowan Old Style", Charter, Cambria, Georgia, serif;
       --sans: -apple-system, "Helvetica Neue", "Segoe UI", Roboto, system-ui, Arial, sans-serif;
       --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      color-scheme: light;
+    }
+    [data-theme="dark"] {
+      --bg: #0F100E;
+      --text: #F4F1EA;
+      --muted: #8F8E88;
+      --accent: #F87171;
+      --rule: #2A2825;
+      --soft: rgba(255, 255, 255, 0.05);
+      --card-bg: #181816;
+      --tooltip-fg: #0F100E;
+      color-scheme: dark;
+    }
+    html, body { transition: background-color 280ms ease, color 280ms ease; }
+    @media (prefers-reduced-motion: reduce) {
+      html, body { transition: none; }
     }
     * { box-sizing: border-box; }
     html { -webkit-text-size-adjust: 100%; }
@@ -34,40 +79,71 @@
     .essay {
       max-width: 38rem;
       margin: 0 auto;
-      padding: 5rem 1.5rem 6rem;
+      padding: 5.5rem 1.5rem 7rem;
     }
 
-    .essay > header { margin-bottom: 4rem; }
+    .essay > header { margin-bottom: 5.5rem; }
     .kicker {
       font-family: var(--sans);
-      font-size: 0.74rem;
-      letter-spacing: 0.2em;
+      font-size: 0.7rem;
+      letter-spacing: 0.22em;
       text-transform: uppercase;
       color: var(--muted);
-      margin: 0 0 1rem;
+      margin: 0 0 1.5rem;
       font-weight: 600;
     }
     .essay h1 {
       font-family: var(--serif);
       font-weight: 600;
-      font-size: clamp(1.75rem, 4.2vw, 2.5rem);
-      letter-spacing: -0.015em;
-      line-height: 1.18;
-      margin: 0 0 1rem;
+      font-size: clamp(1.85rem, 4.4vw, 2.6rem);
+      letter-spacing: -0.018em;
+      line-height: 1.16;
+      margin: 0 0 1.25rem;
       max-width: 32rem;
     }
-    .standfirst {
+    .deck {
+      font-family: var(--serif);
+      font-size: 1.2rem;
+      line-height: 1.5;
+      color: var(--text);
+      margin: 0 0 2rem;
+      max-width: 32rem;
+      font-weight: 400;
+    }
+    .byline {
+      font-family: var(--sans);
+      font-size: 0.82rem;
       color: var(--muted);
+      margin: 0 0 1.25rem;
+      padding: 0.85rem 0;
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      letter-spacing: 0.01em;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0 0.75rem;
+    }
+    .byline .author {
+      color: var(--text);
+      font-weight: 600;
+    }
+    .byline time { font-variant-numeric: tabular-nums; }
+    .byline .sep { opacity: 0.5; }
+    .reader-hint {
+      font-family: var(--serif);
       font-style: italic;
+      font-size: 0.95rem;
+      color: var(--muted);
       margin: 0;
-      font-size: 1.05rem;
       max-width: 28rem;
     }
+    /* legacy class kept for back-compat with older content if any */
+    .standfirst { color: var(--muted); font-style: italic; margin: 0; }
 
     .moment {
-      margin: 3.5rem 0 0;
+      margin: 5rem 0 0;
       border-top: 1px solid var(--rule);
-      padding-top: 2rem;
+      padding-top: 3rem;
     }
     .moment h2 {
       font-family: var(--sans);
@@ -76,28 +152,71 @@
       letter-spacing: 0.18em;
       text-transform: uppercase;
       color: var(--muted);
-      margin: 0 0 1.25rem;
+      margin: 0 0 1.75rem;
     }
     .moment h2 .step-num { color: var(--accent); margin-right: 0.5em; }
-    .moment p { margin: 0 0 1rem; }
+    .moment p { margin: 0 0 1.25rem; }
     .moment p.headline {
       font-family: var(--serif);
-      font-size: 1.35rem;
-      line-height: 1.4;
+      font-size: 1.4rem;
+      line-height: 1.45;
       letter-spacing: -0.005em;
-      margin: 0 0 0.85rem;
+      margin: 0.5rem 0 1.6rem;
       max-width: 32rem;
     }
     .aside {
       font-size: 0.92rem;
       color: var(--muted);
-      margin-top: 0.5rem;
+      margin-top: 1.25rem;
+    }
+
+    /* ===== Editorial rhythm: drop cap + pull quote ===== */
+    #question > p:first-of-type::first-letter {
+      font-family: var(--serif);
+      font-size: 3.6em;
+      line-height: 0.85;
+      float: left;
+      margin: 0.08em 0.14em -0.04em 0;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .pull-quote {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 1.55rem;
+      line-height: 1.45;
+      color: var(--text);
+      margin: 4.5rem 0 4.5rem;
+      padding: 0.25rem 0 0.25rem 1.5rem;
+      border-left: 3px solid var(--accent);
+      max-width: 30rem;
+      letter-spacing: -0.005em;
+    }
+    .pull-quote p { margin: 0; }
+    .pull-quote.pre-reveal { opacity: 0; transform: translateY(22px); }
+    .pull-quote {
+      transition: opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .pull-quote.pre-reveal { opacity: 1 !important; transform: none !important; }
+      .pull-quote { transition: none !important; }
+    }
+    @media (max-width: 30rem) {
+      .pull-quote {
+        font-size: 1.3rem;
+        margin: 3rem 0;
+        padding-left: 1.1rem;
+      }
+      #question > p:first-of-type::first-letter {
+        font-size: 3em;
+      }
     }
     .footnote {
       font-size: 0.85rem;
       color: var(--muted);
-      margin-top: 1rem;
-      padding-top: 0.75rem;
+      margin-top: 1.75rem;
+      padding-top: 1.1rem;
       border-top: 1px solid var(--rule);
     }
 
@@ -212,16 +331,209 @@
       border-bottom-style: solid;
     }
 
-    .scheme-list { padding-left: 1.2rem; margin: 0.5rem 0 1rem; }
-    .scheme-list li { margin-bottom: 0.6rem; }
+    .scheme-list { padding-left: 1.2rem; margin: 1rem 0 1.5rem; }
+    .scheme-list li { margin-bottom: 0.9rem; }
     .scheme-list li strong {
       font-family: var(--sans);
       font-weight: 600;
       font-size: 0.95em;
     }
 
+    .question-list {
+      padding-left: 1.3rem;
+      margin: 1rem 0 1.5rem;
+    }
+    .question-list li { margin-bottom: 1rem; }
+    .question-list li strong {
+      font-family: var(--sans);
+      font-weight: 600;
+      font-size: 0.95em;
+    }
+    .moment h2.preface-heading {
+      color: var(--text);
+      letter-spacing: 0.14em;
+    }
+
+    .sub-h3 {
+      font-family: var(--sans);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 2rem 0 0.85rem;
+    }
+    .methodology-list {
+      padding-left: 1.3rem;
+      margin: 0.5rem 0 1.5rem;
+    }
+    .methodology-list li {
+      margin-bottom: 0.85rem;
+      font-size: 0.97rem;
+      line-height: 1.6;
+    }
+    .methodology-list li strong {
+      font-family: var(--sans);
+      font-weight: 600;
+      font-size: 0.95em;
+    }
+    .methodology-list a {
+      color: var(--text);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--muted);
+      transition: color 200ms ease, border-color 200ms ease;
+    }
+    .methodology-list a:hover {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      border-bottom-style: solid;
+    }
+
+    .cite-block {
+      background: var(--soft);
+      border-radius: 6px;
+      padding: 1rem 1.2rem;
+      margin: 0.85rem 0 1.25rem;
+    }
+    .cite-plain {
+      font-family: var(--serif);
+      font-size: 0.95rem;
+      margin: 0 0 0.85rem;
+      color: var(--text);
+    }
+    .cite-bibtex {
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      background: var(--card-bg);
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      padding: 0.7rem 0.85rem;
+      margin: 0;
+      white-space: pre;
+      overflow-x: auto;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* ===== Share button + toast ===== */
+    .share-row {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin: 1.75rem 0 0;
+      flex-wrap: wrap;
+    }
+    .share-btn {
+      font: inherit;
+      font-family: var(--sans);
+      font-size: 0.88rem;
+      font-weight: 500;
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--rule);
+      padding: 0.55rem 0.95rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: border-color 180ms ease, color 180ms ease, background 180ms ease;
+    }
+    .share-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .share-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    .share-toast {
+      font-family: var(--sans);
+      font-size: 0.82rem;
+      color: var(--muted);
+      opacity: 0;
+      transform: translateX(-4px);
+      transition: opacity 220ms ease, transform 220ms ease;
+    }
+    .share-toast.show {
+      opacity: 1;
+      transform: translateX(0);
+      color: var(--accent);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .share-btn, .share-toast { transition: none; }
+    }
+
+    /* ===== Glossary popovers ===== */
+    .def {
+      position: relative;
+      cursor: help;
+      border-bottom: 1px dotted var(--muted);
+      white-space: nowrap;
+      transition: color 180ms ease, border-color 180ms ease;
+    }
+    .def:hover, .def:focus-within {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      border-bottom-style: solid;
+    }
+    .def:focus { outline: none; }
+    .def:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+    .def::before {
+      content: attr(data-def);
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%) translateY(4px);
+      background: var(--text);
+      color: var(--tooltip-fg);
+      font-family: var(--sans);
+      font-style: normal;
+      font-weight: 400;
+      font-size: 0.78rem;
+      line-height: 1.5;
+      letter-spacing: 0.005em;
+      padding: 0.6rem 0.8rem;
+      border-radius: 5px;
+      width: max-content;
+      max-width: 18rem;
+      white-space: normal;
+      text-align: left;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 200ms ease, transform 200ms ease;
+      z-index: 60;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    }
+    .def::after {
+      content: "";
+      position: absolute;
+      bottom: calc(100% + 4px);
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: var(--text);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 200ms ease;
+    }
+    .def:hover::before,
+    .def:focus-within::before {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    .def:hover::after,
+    .def:focus-within::after { opacity: 1; }
+    @media (prefers-reduced-motion: reduce) {
+      .def, .def::before, .def::after { transition: none; }
+    }
+    @media (max-width: 30rem) {
+      .def::before { max-width: 14rem; font-size: 0.74rem; }
+    }
+
     .chart-wrap {
-      margin: 1.75rem 0 1rem;
+      margin: 2.5rem 0 1.5rem;
       width: 100%;
     }
     .chart-wrap svg { width: 100%; height: auto; display: block; overflow: visible; }
@@ -263,15 +575,15 @@
       details.model-coda[open] summary::before,
       details.model-coda summary::before { transition: none; }
     }
-    .maths p { margin: 0.65rem 0; }
+    .maths p { margin: 0.9rem 0; }
     .maths .f {
       font-family: var(--mono);
       background: var(--soft);
-      padding: 0.7rem 0.9rem;
+      padding: 0.85rem 1.05rem;
       border-radius: 4px;
       font-size: 0.92rem;
-      margin: 0.5rem 0 1rem;
-      line-height: 1.6;
+      margin: 0.85rem 0 1.5rem;
+      line-height: 1.65;
       overflow-x: auto;
     }
     .maths em { font-style: italic; }
@@ -281,12 +593,12 @@
       font-weight: 600;
       letter-spacing: -0.005em;
       color: var(--text);
-      margin: 2rem 0 0.6rem;
-      padding-top: 1.25rem;
+      margin: 2.75rem 0 0.85rem;
+      padding-top: 1.75rem;
       border-top: 1px solid var(--rule);
     }
     .maths h3:first-child {
-      margin-top: 0.5rem;
+      margin-top: 1rem;
       padding-top: 0;
       border-top: none;
     }
@@ -300,9 +612,9 @@
     }
     .maths ul {
       padding-left: 1.3rem;
-      margin: 0.7rem 0 1rem;
+      margin: 1rem 0 1.5rem;
     }
-    .maths ul li { margin-bottom: 0.5rem; }
+    .maths ul li { margin-bottom: 0.75rem; }
     .maths strong {
       font-family: var(--sans);
       font-weight: 600;
@@ -312,19 +624,19 @@
       font-style: italic;
       color: var(--muted);
       border-left: 2px solid var(--rule);
-      padding: 0.05rem 0 0.05rem 0.85rem;
-      margin: 0.75rem 0 1rem;
+      padding: 0.15rem 0 0.15rem 1rem;
+      margin: 1.1rem 0 1.5rem;
     }
 
     .essay > footer {
-      margin-top: 4rem;
-      padding-top: 2rem;
+      margin-top: 6rem;
+      padding-top: 2.5rem;
       border-top: 1px solid var(--rule);
       font-family: var(--sans);
       font-size: 0.85rem;
       color: var(--muted);
     }
-    .essay > footer p { margin: 0.35rem 0; }
+    .essay > footer p { margin: 0.55rem 0; }
     .essay > footer .links a {
       color: var(--text);
       text-decoration: none;
@@ -337,24 +649,341 @@
       border-bottom-color: var(--accent);
     }
 
+    /* ===== Theme toggle ===== */
+    .theme-toggle {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--rule);
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 110;
+      transition: border-color 200ms ease, color 200ms ease, transform 200ms ease, background-color 280ms ease;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+    .theme-toggle:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-1px);
+    }
+    .theme-toggle:active { transform: translateY(0); }
+    .theme-toggle:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+    .theme-toggle svg {
+      width: 18px;
+      height: 18px;
+      display: block;
+      transition: transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 240ms ease;
+    }
+    .theme-toggle .icon-sun  { display: none; }
+    .theme-toggle .icon-moon { display: block; }
+    [data-theme="dark"] .theme-toggle .icon-sun  { display: block; }
+    [data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .theme-toggle, .theme-toggle svg { transition: none; }
+    }
+    @media print {
+      .theme-toggle { display: none !important; }
+    }
+
+    /* ===== Reading progress ===== */
+    #read-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: 0 0;
+      z-index: 100;
+      will-change: transform;
+      pointer-events: none;
+    }
+
+    /* ===== Animations ===== */
+    html { scroll-behavior: smooth; }
+
+    .essay > header > * {
+      opacity: 0;
+      transform: translateY(10px);
+      animation: introUp 0.85s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+    .essay > header .kicker      { animation-delay: 0.05s; }
+    .essay > header h1           { animation-delay: 0.18s; }
+    .essay > header .deck        { animation-delay: 0.32s; }
+    .essay > header .byline      { animation-delay: 0.46s; }
+    .essay > header .reader-hint { animation-delay: 0.60s; }
+    @keyframes introUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .moment {
+      transition: opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .moment.pre-reveal {
+      opacity: 0;
+      transform: translateY(22px);
+    }
+    .essay > footer {
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .essay > footer.pre-reveal {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+
+    .rnum.editable { position: relative; }
+    .rnum.editable::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -7px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--accent);
+      transform: translateX(-50%) scale(0);
+      opacity: 0;
+      transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 220ms ease;
+      pointer-events: none;
+    }
+    .rnum.editable:hover::after,
+    .rnum.editable:focus-visible::after,
+    .rnum.editable.dragging::after {
+      transform: translateX(-50%) scale(1);
+      opacity: 1;
+    }
+
+    .question-list a {
+      color: var(--text);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--muted);
+      transition: color 200ms ease, border-color 200ms ease;
+      padding-bottom: 1px;
+    }
+    .question-list a:hover {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      border-bottom-style: solid;
+    }
+
+    .chart-wrap svg path {
+      transition: stroke-dashoffset 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .chart-wrap svg .end-label,
+    .chart-wrap svg .cross-line,
+    .chart-wrap svg .cross-label,
+    .chart-wrap svg .cmp-label {
+      transition: opacity 0.5s ease;
+    }
+
+    details.model-coda summary {
+      transition: color 180ms ease;
+    }
+    details.model-coda summary:hover {
+      color: var(--accent);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .essay > header > * {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      .moment.pre-reveal,
+      .essay > footer.pre-reveal {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      .moment,
+      .essay > footer,
+      .rnum.editable::after,
+      .chart-wrap svg path,
+      .chart-wrap svg .end-label,
+      .chart-wrap svg .cross-line,
+      .chart-wrap svg .cross-label,
+      .chart-wrap svg .cmp-label,
+      .question-list a,
+      details.model-coda summary {
+        transition: none !important;
+      }
+    }
+
     @media (max-width: 30rem) {
       body { font-size: 17px; }
       .essay { padding: 3rem 1.1rem 4rem; }
       .moment { margin-top: 2.75rem; }
     }
+
+    /* ===== Print stylesheet ===== */
+    @media print {
+      :root {
+        --bg: #ffffff;
+        --text: #000000;
+        --muted: #555555;
+        --accent: #000000;
+        --rule: #cccccc;
+      }
+      html { scroll-behavior: auto; }
+      body {
+        background: #fff;
+        color: #000;
+        font-size: 11pt;
+        line-height: 1.55;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+      #read-progress,
+      .income-slider,
+      .share-row,
+      .reader-hint,
+      .housing-pick {
+        display: none !important;
+      }
+      .rnum.editable {
+        border-bottom: none !important;
+        cursor: default !important;
+        color: #000 !important;
+      }
+      .rnum.editable::after,
+      .rnum::after { display: none !important; content: none !important; }
+      .def {
+        border-bottom: 1px solid #777 !important;
+        cursor: default !important;
+        color: #000 !important;
+      }
+      .def::before, .def::after { display: none !important; content: none !important; }
+      .essay { max-width: none; padding: 0; }
+      .essay > header { margin-bottom: 2rem; }
+      .essay h1 { font-size: 22pt; }
+      .deck { font-size: 12.5pt; }
+      .byline { font-size: 9.5pt; }
+      .moment {
+        margin-top: 2rem;
+        padding-top: 1rem;
+        page-break-inside: avoid;
+      }
+      .moment#question,
+      .moment#findings,
+      .moment#methodology,
+      .moment#model {
+        page-break-before: auto;
+      }
+      .moment#hook { page-break-before: avoid; }
+      .moment p.headline { font-size: 14pt; }
+      .pull-quote {
+        font-size: 13pt;
+        border-left-color: #777;
+        margin: 1.5rem 0;
+      }
+      .chart-wrap svg {
+        max-width: 100%;
+      }
+      .chart-wrap svg .line-e,
+      .chart-wrap svg .line-e.line-e { stroke: #222 !important; stroke-dasharray: none !important; stroke-dashoffset: 0 !important; }
+      .chart-wrap svg .line-s { stroke: #777 !important; stroke-dasharray: 4 4 !important; stroke-dashoffset: 0 !important; }
+      .chart-wrap svg .end-label,
+      .chart-wrap svg .cross-line,
+      .chart-wrap svg .cross-label,
+      .chart-wrap svg .cmp-label { opacity: 1 !important; }
+      .chart-wrap svg .end-e,
+      .chart-wrap svg .label-e,
+      .chart-wrap svg .cross-label { fill: #222 !important; }
+      .chart-wrap svg .end-s,
+      .chart-wrap svg .label-s { fill: #555 !important; }
+      .chart-wrap svg .cross-line { stroke: #222 !important; }
+      .moment.pre-reveal,
+      .pull-quote.pre-reveal,
+      .essay > footer.pre-reveal {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      .maths .f, .cite-bibtex {
+        background: #f4f4f4 !important;
+        border: 1px solid #cccccc !important;
+      }
+      .essay a[href^="http"]::after {
+        content: " ⟨" attr(href) "⟩";
+        font-family: ui-monospace, monospace;
+        font-size: 0.85em;
+        color: #555;
+      }
+      .essay > footer .links a { border-bottom: none; }
+      .essay > footer {
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid #ccc;
+      }
+      h2, h3, .preface-heading { page-break-after: avoid; }
+      .chart-wrap { page-break-inside: avoid; }
+      @page {
+        margin: 18mm 16mm;
+      }
+    }
   </style>
 </head>
 <body>
+  <div id="read-progress" aria-hidden="true"></div>
+  <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Switch to dark mode" aria-pressed="false" title="Switch theme">
+    <svg class="icon-moon" viewBox="0 0 20 20" aria-hidden="true">
+      <path d="M16.5 12.4A7.5 7.5 0 1 1 7.6 3.5a6 6 0 0 0 8.9 8.9z" fill="currentColor"/>
+    </svg>
+    <svg class="icon-sun" viewBox="0 0 20 20" aria-hidden="true">
+      <circle cx="10" cy="10" r="3.6" fill="currentColor"/>
+      <g stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+        <line x1="10" y1="1.5" x2="10" y2="3.6"/>
+        <line x1="10" y1="16.4" x2="10" y2="18.5"/>
+        <line x1="1.5" y1="10" x2="3.6" y2="10"/>
+        <line x1="16.4" y1="10" x2="18.5" y2="10"/>
+        <line x1="4" y1="4" x2="5.5" y2="5.5"/>
+        <line x1="14.5" y1="14.5" x2="16" y2="16"/>
+        <line x1="4" y1="16" x2="5.5" y2="14.5"/>
+        <line x1="14.5" y1="5.5" x2="16" y2="4"/>
+      </g>
+    </svg>
+  </button>
   <article class="essay">
     <header>
-      <p class="kicker">A reactive essay</p>
       <h1>How much of your bills does the Singapore Budget actually cover?</h1>
-      <p class="standfirst">Drag the underlined numbers as you read. Everything below recalculates as you go.</p>
+      <p class="deck">When inflation outruns subsidy growth — the usual case — the share of your monthly expenses that government support covers decays geometrically. This page lets you find your household's number, and watch where it goes over the next ten years.</p>
+      <p class="byline">
+        <span>By <span class="author">Ashlyn, Keng Tuan, Lingli</span></span>
+        <span class="sep" aria-hidden="true">·</span>
+        <span class="sep" aria-hidden="true">·</span>
+      </p>
+      <p class="reader-hint">Drag the underlined numbers as you read — everything below recalculates as you go.</p>
     </header>
+
+    <section class="moment" id="question">
+      <h2 class="preface-heading">Problem statement</h2>
+      <p>Singapore's annual Budget delivers a bundle of cost-of-living support — <span class="def" tabindex="0" data-def="Community Development Council vouchers — household-level cost-of-living top-ups, redeemable at participating supermarkets and hawker stalls.">CDC</span> vouchers, the <span class="def" tabindex="0" data-def="GST Voucher — a package of government transfers (cash, U-Save and MediSave components) designed to offset the Goods and Services Tax for lower- and middle-income households.">GST Voucher</span> (cash and <span class="def" tabindex="0" data-def="Utilities-Save — quarterly rebates credited against utility bills for eligible HDB households.">U-Save</span>), and transport top-ups — each tiered by housing type and per-capita household income. The question this page sets out to answer is straightforward to state and surprisingly subtle to measure:</p>
+      <p class="headline">How effective are Singapore Budget cost-of-living support measures in reducing household expenditure across different income groups?</p>
+      <p>"Effective" here is operationalised as three concrete, measurable things — each addressed by a later section of this page:</p>
+      <ol class="question-list">
+        <li><strong>Coverage today.</strong> At year 0, what fraction of monthly expenses does total support cover? — i.e. <em>S</em>(0) ÷ <em>E</em>(0). Addressed in <a href="#today">section 04</a>.</li>
+        <li><strong>Persistence over time.</strong> Does that coverage hold as inflation outpaces subsidy growth? In what year does effectiveness first fall below a chosen threshold <em>τ</em>? Addressed in <a href="#years">section 05</a>.</li>
+        <li><strong>Equity across groups.</strong> Do low-income households receive proportionally more support than high-income ones, and does that gap widen or narrow over ten years? Addressed in <a href="#across">section 06</a>.</li>
+      </ol>
+      <p class="aside">Scope of the model: geometric growth in both expenses and support, a 10-year horizon, and approximate 2025 Budget figures (teaching values, not official <span class="def" tabindex="0" data-def="Ministry of Finance — the Singapore government department that produces the annual Budget.">MOF</span> amounts). Behavioural responses, in-kind benefits absorbed at the provider level (e.g., subsidised polyclinic visits, <span class="def" tabindex="0" data-def="Housing &amp; Development Board — the statutory board that builds and manages most of Singapore's public housing.">HDB</span> grants), and schemes beyond the three listed above are out of scope. The maths underpinning all three measures is laid out in <a href="#model">section 07</a>.</p>
+    </section>
 
     <section class="moment" id="hook">
       <h2><span class="step-num">01</span>The household</h2>
-      <p>Your household earns <span class="rnum" data-bind="income">S$8,000</span> a month across <span class="rnum" data-bind="persons">2</span> people. That works out to <span class="rnum" data-bind="pchi">S$4,000</span> per person — placing you in the <span class="rnum" data-bind="class-label">middle</span>-income band on Singapore's PCHI scale.</p>
+      <p>Your household earns <span class="rnum" data-bind="income">S$8,000</span> a month across <span class="rnum" data-bind="persons">2</span> people. That works out to <span class="rnum" data-bind="pchi">S$4,000</span> per person — placing you in the <span class="rnum" data-bind="class-label">middle</span>-income band on Singapore's <span class="def" tabindex="0" data-def="Per-capita household income — monthly household income divided by the number of household members; used by means-tested schemes to determine eligibility.">PCHI</span> scale.</p>
       <div class="income-slider">
         <input type="range" id="income-range" min="0" max="100000" step="500" value="8000" aria-label="Monthly household income in Singapore dollars" />
         <div class="scale" aria-hidden="true"><span>S$0</span><span>S$50K</span><span>S$100K</span></div>
@@ -395,11 +1024,19 @@
       <p class="aside">That percentage is just S(0) ÷ E(0): support divided by expenses, expressed as a percent. We track this <em>effectiveness</em> over the next ten years in the chart below.</p>
     </section>
 
+    <aside class="pull-quote" role="note">
+      <p>“A fixed dollar amount in an inflating economy is a slowly disappearing one.”</p>
+    </aside>
+
     <section class="moment" id="years">
       <h2><span class="step-num">05</span>What ten years does</h2>
       <p>Two things move over time: prices rise and the Budget grows. At <span class="rnum" data-bind="i">3.0%</span> annual inflation and <span class="rnum" data-bind="s">1.0%</span> annual subsidy growth, the two curves separate — and because each year's rise compounds on the previous one, the gap widens faster than the rates alone suggest. A 3% rate doesn't add 30% after a decade; it adds about 34%.</p>
       <div class="chart-wrap" id="chart-main" aria-label="Monthly expenses versus support over ten years"></div>
       <p class="caption">At your effectiveness threshold of <span class="rnum" data-bind="tau">5%</span>, <span id="cross-narrative">…</span></p>
+      <div class="share-row">
+        <button type="button" class="share-btn" id="share-btn" aria-label="Copy a permalink to this scenario">Copy link to this scenario</button>
+        <span class="share-toast" id="share-toast" role="status" aria-live="polite"></span>
+      </div>
     </section>
 
     <section class="moment" id="across">
@@ -410,22 +1047,108 @@
     </section>
 
     <section class="moment" id="model">
-      <h2><span class="step-num">07</span>The model, if you want it</h2>
-      <p>The whole page is four short equations. Everything else is a way of seeing them.</p>
-      <details class="model-coda">
-        <summary>Show the maths</summary>
-        <div class="maths">
-          <p>Expenditure and support both compound annually:</p>
-          <p class="f">E(n) = E(0) · (1 + i)<sup>n</sup><br />S(n) = S(0) · (1 + s)<sup>n</sup></p>
-          <p>The net burden is their difference, and effectiveness is the ratio:</p>
-          <p class="f">B(n) = E(n) − S(n)<br />reduction(n) = 100 · S(n) / E(n)</p>
-          <p>Year-on-year change in burden:</p>
-          <p class="f">ΔB(n) = E(0)(1+i)<sup>n−1</sup> · i  −  S(0)(1+s)<sup>n−1</sup> · s</p>
-          <p>The threshold year — the first <em>n</em> at which reduction drops below τ — has a closed form when inflation outruns subsidy growth (<em>i</em> &gt; <em>s</em>):</p>
-          <p class="f">n* = ⌈ ln(τ · E(0) / (100 · S(0))) / ln((1+s)/(1+i)) ⌉</p>
-          <p>When <em>i</em> ≤ <em>s</em>, the ratio S(n)/E(n) is non-decreasing and no such year exists.</p>
-        </div>
-      </details>
+      <h2><span class="step-num">07</span>The maths</h2>
+      <p>The whole page is built from three ideas: <em>geometric sequences</em>, the <em>ratio of two of them</em>, and a <em>logarithm</em> to find where one curve crosses a line. Here they are in order — read these and you'll understand exactly what every number above is doing.</p>
+      <div class="maths">
+
+        <h3><span class="ix">1</span>Compounding — geometric sequences</h3>
+        <p>When a price rises 3% in a year, it rises by 3% of <em>last year's</em> price, not 3% of the original. After two years that 3% has been applied to an already-3%-higher base, and so on. This is <strong>compound growth</strong>, and it's described by a recurrence — each term defined in terms of the previous:</p>
+        <p class="f">E(n + 1) = E(n) · (1 + i),  &nbsp; E(0) given</p>
+        <p>A sequence built by multiplying by a fixed ratio is called a <strong>geometric sequence</strong>. Unrolling the recurrence — apply it once, then again, then again — gives a closed form:</p>
+        <p class="f">E(n) = E(0) · (1 + i)<sup>n</sup></p>
+        <p>Support follows the same shape with its own growth rate <em>s</em>:</p>
+        <p class="f">S(n) = S(0) · (1 + s)<sup>n</sup></p>
+        <p class="takeaway">Try setting inflation to 0% in section 5: the expense line flattens, because (1 + 0)<sup>n</sup> = 1 for every <em>n</em>. Compounding only matters when the rate is non-zero.</p>
+
+        <h3><span class="ix">2</span>Why the curves diverge — the ratio of two geometrics</h3>
+        <p>The <strong>net burden</strong> — what the household carries after subsidies — is the difference of two geometric sequences:</p>
+        <p class="f">B(n) = E(n) − S(n) = E(0)(1+i)<sup>n</sup> − S(0)(1+s)<sup>n</sup></p>
+        <p>B(n) itself is <em>not</em> a geometric sequence; it's the difference of two. But to ask "how well does support keep up with prices?" the cleaner quantity is the <strong>ratio</strong>, which we call effectiveness:</p>
+        <p class="f">S(n) / E(n) = [S(0)/E(0)] · [(1 + s)/(1 + i)]<sup>n</sup></p>
+        <p>This <em>is</em> a geometric sequence in <em>n</em>, with ratio (1+s)/(1+i). The behaviour falls into three clean regimes:</p>
+        <ul>
+          <li><strong>i &gt; s</strong> (inflation outruns subsidy growth) → ratio &lt; 1, so effectiveness <strong>decays geometrically</strong> by the same factor each year. This is what you'll see most of the time.</li>
+          <li><strong>i = s</strong> → ratio = 1, effectiveness is constant forever and the two lines stay parallel.</li>
+          <li><strong>i &lt; s</strong> → ratio &gt; 1, support gradually catches up.</li>
+        </ul>
+        <p class="takeaway">"Erosion" isn't a metaphor here — it's literally multiplicative decay by a fixed factor each year, which is why the effectiveness line in the chart looks like a smooth downward curve rather than a straight line.</p>
+
+        <h3><span class="ix">3</span>Year-on-year pressure — the discrete derivative</h3>
+        <p>A continuous function has a derivative; a sequence indexed by integer years has a <strong>discrete difference</strong>. ΔB(n) = B(n) − B(n − 1) tells you how much worse <em>this</em> year is than <em>last</em> year. Substituting the geometric form and simplifying (subtract B(n) from B(n−1), then factor):</p>
+        <p class="f">ΔB(n) = E(0)(1 + i)<sup>n−1</sup> · i  −  S(0)(1 + s)<sup>n−1</sup> · s</p>
+        <p>Read it as "this year's added expense pressure minus this year's added relief." Because the expense base E(0) is almost always much larger than the support base S(0), and (1+i)<sup>n−1</sup> grows faster than (1+s)<sup>n−1</sup> when i &gt; s, the first term dominates and ΔB stays positive and grows over time.</p>
+        <p class="takeaway">If you set i = s and E(0) &gt; S(0), ΔB still stays positive — even matched growth rates can't close a starting gap. But ΔB stops <em>accelerating</em>, because each year adds the same absolute increment.</p>
+
+        <h3><span class="ix">4</span>Finding the threshold year — solving with a logarithm</h3>
+        <p>Set yourself a threshold τ for "support that's still meaningful" — the page defaults to 5%. When does effectiveness first drop below it? Start by setting S(n)/E(n) equal to τ/100:</p>
+        <p class="f">[S(0)/E(0)] · [(1 + s)/(1 + i)]<sup>n</sup> = τ / 100</p>
+        <p>Rearrange so the power-of-<em>n</em> term is alone on one side:</p>
+        <p class="f">[(1 + s)/(1 + i)]<sup>n</sup> = (τ · E(0)) / (100 · S(0))</p>
+        <p>To pull <em>n</em> out of the exponent, take the natural logarithm of both sides — this is exactly the situation logarithms were invented for:</p>
+        <p class="f">n · ln((1 + s)/(1 + i)) = ln((τ · E(0)) / (100 · S(0)))</p>
+        <p>Solve for <em>n</em> and round up, because years are integers and we want the <em>first</em> year the condition holds:</p>
+        <p class="f">n* = ⌈ ln(τ · E(0) / (100 · S(0))) / ln((1 + s)/(1 + i)) ⌉</p>
+        <p>This closed form is exactly where the page draws the vertical hairline in the chart. Two edge cases the formula naturally handles:</p>
+        <ul>
+          <li>If <strong>i ≤ s</strong>, the denominator ln((1+s)/(1+i)) is non-negative, the ratio S(n)/E(n) never decreases, and no threshold year exists. The page reports "stays above the threshold through year 10."</li>
+          <li>If the household already starts below the threshold at year 0 — i.e. τ · E(0) ≥ 100 · S(0) — the formula gives n* = 0.</li>
+        </ul>
+
+        <h3><span class="ix">★</span>The whole model on one line</h3>
+        <p>Compounding gives you two rising curves. Their ratio decays geometrically when one rate beats the other. A single logarithm tells you when that ratio crosses any threshold you care about. Everything else on this page — every number, every chart, every caption — is one of those three quantities evaluated at some <em>n</em>.</p>
+      </div>
+    </section>
+
+    <section class="moment" id="findings">
+      <h2 class="preface-heading">What this means</h2>
+      <p>The structural finding is simple, and the page makes it visible: whenever inflation outruns subsidy growth — the typical case in any developed economy — support effectiveness, the ratio S(n) ÷ E(n), erodes geometrically. Not linearly. Not at a rate you can dismiss by quoting last year's headline number. The decay factor is exactly (1 + s) ÷ (1 + i), and it compounds on itself each year.</p>
+      <p>What this page is not: a forecast. The expense baselines are synthetic teaching values, not households surveyed by SingStat; the support figures are 2025-approximate, not what any specific household actually receives; the model ignores behavioural responses, in-kind subsidies (subsidised polyclinic visits, HDB grants, education vouchers) and the dozens of smaller schemes that round out a real Budget package. Real cost-of-living arithmetic is messier than two compounding curves.</p>
+      <p>What would actually change the picture? Four levers fall out of the maths directly: raise <em>s</em> so it matches or exceeds <em>i</em>; index each scheme to the CPI so <em>s</em> tracks <em>i</em> automatically; broaden the eligible expense basket so a larger fraction of E(n) is reached by support; or shift from cash transfers to subsidised provision, where the price paid by households moves with the subsidy rather than the market. Different levers carry different fiscal and political costs. The model doesn't pick one — but it makes the tradeoff visible.</p>
+    </section>
+
+    <section class="moment" id="methodology">
+      <h2 class="preface-heading">Methodology &amp; sources</h2>
+      <p>This page is a teaching artifact, not an official tool. Every number is reproducible from the source code, which is a single self-contained HTML file with no external dependencies.</p>
+
+      <h3 class="sub-h3">Where the numbers come from</h3>
+      <ul class="methodology-list">
+        <li><strong>Expense baselines</strong> (section 2): synthetic, structured loosely after SingStat's <em>Household Expenditure Survey</em> bands. Each baseline is the monthly amount for a reference two-person household; the page then scales by household size and applies a small housing-type multiplier. Treat as illustrative — your real basket is the one you measure yourself.</li>
+        <li><strong>CDC voucher amounts</strong> (section 3): 2025-approximate, tiered by housing type. The model uses S$500 / S$400 / S$300 / S$200 for 1–2-room, 3–4-room, 5-room HDB and private respectively.</li>
+        <li><strong>GST Voucher and U-Save</strong>: an approximate annualised bundle, tiered by income band and housing type. Real eligibility and payouts depend on per-capita household income, age, and assessable income — set by the Government in each Budget.</li>
+        <li><strong>Transport top-ups</strong>: modelled as a flat S$200 per year per household for illustrative simplicity. The actual schemes are more granular and means-tested.</li>
+        <li><strong>PCHI thresholds</strong>: S$1,500 and S$5,000 — the cutoffs used by several MSF and Singapore Budget programmes for the "low" and "high" boundaries. Both have moved over time and may move again.</li>
+        <li><strong>Inflation default (3.0%)</strong>: roughly aligned with Singapore's <em>headline</em> CPI in recent years. The actual MAS Core Inflation differs and is the typical reference for policy. Move the slider and watch what changes.</li>
+        <li><strong>Subsidy growth default (1.0%)</strong>: a placeholder. The Singapore Budget does not commit to a fixed annual escalation; each year's enhancements are announced in the Budget speech. The default exists so the page has a starting state.</li>
+      </ul>
+
+      <h3 class="sub-h3">Assumptions worth flagging</h3>
+      <ul class="methodology-list">
+        <li>Both E(n) and S(n) follow pure geometric growth at fixed rates. Real inflation is volatile; the model trades realism for clarity.</li>
+        <li>The household's basket is held constant in real terms — there is no substitution toward cheaper goods as prices rise.</li>
+        <li>Support is treated as cash-equivalent. In-kind benefits (subsidised healthcare, education, housing) are deliberately out of scope.</li>
+        <li>The 10-year horizon is a teaching choice. Beyond ten years the geometric drift dominates anything else; for the qualitative point that's sufficient.</li>
+      </ul>
+
+      <h3 class="sub-h3">Reference reading</h3>
+      <ul class="methodology-list">
+        <li>Singapore Budget 2025 — <a href="https://www.mof.gov.sg/singaporebudget" rel="noopener">mof.gov.sg/singaporebudget</a> — primary source for current scheme amounts.</li>
+        <li>SingStat — <a href="https://www.singstat.gov.sg" rel="noopener">singstat.gov.sg</a> — Household Expenditure Survey, CPI, household income distribution.</li>
+        <li>Ministry of Social and Family Development — <a href="https://www.msf.gov.sg" rel="noopener">msf.gov.sg</a> — PCHI definitions and eligibility frameworks.</li>
+        <li>Monetary Authority of Singapore — <a href="https://www.mas.gov.sg" rel="noopener">mas.gov.sg</a> — headline and core inflation series.</li>
+      </ul>
+
+      <h3 class="sub-h3">How to cite</h3>
+      <div class="cite-block">
+        <p class="cite-plain">A model by the reader, “How much of your bills does the Singapore Budget actually cover?”, 21 May 2026. Interactive essay.</p>
+        <pre class="cite-bibtex">@misc{cost_of_living_sg_2026,
+  title  = {How much of your bills does the Singapore Budget actually cover?},
+  author = {A model by the reader},
+  year   = {2026},
+  note   = {Interactive essay},
+}</pre>
+      </div>
+
+      <p class="aside">Last updated <time datetime="2026-05-21">21 May 2026</time>. Source: this page. Found a mistake or want to extend the model? The whole thing is one self-contained HTML file.</p>
     </section>
 
     <footer>
@@ -566,6 +1289,88 @@
   var lastRows = null;
   var lastMeta = null;
 
+  // ---------- URL hash <-> state ----------
+
+  function loadStateFromHash() {
+    var hash = (window.location.hash || "").replace(/^#/, "");
+    if (!hash) return;
+    var params = {};
+    hash.split("&").forEach(function (kv) {
+      var idx = kv.indexOf("=");
+      if (idx < 0) return;
+      var k = kv.substring(0, idx);
+      var v = decodeURIComponent(kv.substring(idx + 1));
+      params[k] = v;
+    });
+    if (params.inc !== undefined) {
+      var inc = parseInt(params.inc, 10);
+      if (isFinite(inc) && inc >= 0) state.income = Math.min(100000, inc);
+    }
+    if (params.p !== undefined) {
+      var p = parseInt(params.p, 10);
+      if (isFinite(p) && p >= 1 && p <= 8) state.persons = p;
+    }
+    if (params.h !== undefined && HOUSING_MULT[params.h]) {
+      state.housing = params.h;
+    }
+    if (params.i !== undefined) {
+      var iv = parseFloat(params.i);
+      if (isFinite(iv) && iv >= 0 && iv <= 50) state.i = iv / 100;
+    }
+    if (params.s !== undefined) {
+      var sv = parseFloat(params.s);
+      if (isFinite(sv) && sv >= 0 && sv <= 50) state.s = sv / 100;
+    }
+    if (params.t !== undefined) {
+      var t = parseFloat(params.t);
+      if (isFinite(t) && t >= 0 && t <= 100) state.tau = t;
+    }
+    if (params.e !== undefined) {
+      var parts = params.e.split(",").map(function (x) { return parseInt(x, 10); });
+      if (parts.length === CATEGORIES.length && parts.every(function (x) { return isFinite(x) && x >= 0; })) {
+        var manual = {};
+        CATEGORIES.forEach(function (c, i) { manual[c.key] = parts[i]; });
+        state.expenses = manual;
+        state.manualBasket = true;
+      }
+    } else {
+      // No expense override: rebuild defaults based on new state
+      state.expenses = defaultExpenses(classFromState(), state.persons, state.housing);
+      state.manualBasket = false;
+    }
+  }
+
+  var hashTimer = null;
+  function writeStateToHash() {
+    if (hashTimer) clearTimeout(hashTimer);
+    hashTimer = window.setTimeout(function () {
+      var parts = [
+        "inc=" + state.income,
+        "p=" + state.persons,
+        "h=" + state.housing,
+        "i=" + (state.i * 100).toFixed(2).replace(/\.?0+$/, ""),
+        "s=" + (state.s * 100).toFixed(2).replace(/\.?0+$/, ""),
+        "t=" + state.tau
+      ];
+      if (state.manualBasket) {
+        parts.push("e=" + CATEGORIES.map(function (c) { return state.expenses[c.key]; }).join(","));
+      }
+      var newHash = "#" + parts.join("&");
+      if (window.location.hash !== newHash) {
+        try {
+          history.replaceState(null, "", newHash);
+        } catch (err) {
+          // ignore — non-critical
+        }
+      }
+    }, 250);
+  }
+
+  // First-render flags so chart line-draw animation only fires once per chart.
+  var firstMain = true;
+  var firstCompare = true;
+  var motionReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
   // ---------- Formatting ----------
 
   function fmtMoney(n) {
@@ -589,11 +1394,79 @@
   function setText(el, str) {
     if (!el) return;
     if (el.textContent !== str) {
+      if (el.dataset.countTarget) delete el.dataset.countTarget; // cancel any in-flight count-up
       el.textContent = str;
       el.classList.add("flash");
       // Use rAF to ensure the class change repaints, then remove on next frame batch
       window.setTimeout(function () { el.classList.remove("flash"); }, 220);
     }
+  }
+
+  // ---------- Count-up animation ----------
+
+  function parseNumeral(text) {
+    if (!text) return null;
+    var m;
+    // Money: "S$8,000" or "S$1,234"
+    m = text.match(/^S\$([\d,]+(?:\.\d+)?)$/);
+    if (m) return { value: parseFloat(m[1].replace(/,/g, "")), kind: "money" };
+    // Percent: "5.4%" or "3.0%" or "5%"
+    m = text.match(/^([\d.]+)%$/);
+    if (m) return { value: parseFloat(m[1]), kind: "pct" };
+    // Bare integer: "2"
+    m = text.match(/^(\d+)$/);
+    if (m) return { value: parseFloat(m[1]), kind: "int" };
+    return null;
+  }
+
+  function formatNumeral(value, kind) {
+    if (kind === "money") return "S$" + Math.round(value).toLocaleString("en-SG");
+    if (kind === "pct") return (Math.round(value * 10) / 10).toFixed(1) + "%";
+    if (kind === "int") return String(Math.round(value));
+    return String(value);
+  }
+
+  function startCountUp(el, delayMs) {
+    var finalText = el.dataset.countTarget;
+    if (!finalText) return;
+    var parsed = parseNumeral(finalText);
+    if (!parsed) {
+      el.textContent = finalText;
+      delete el.dataset.countTarget;
+      return;
+    }
+    var duration = 750;
+    var startTime = null;
+    function tick(now) {
+      // Cancelled by setText writing a new value
+      if (el.dataset.countTarget !== finalText) return;
+      if (startTime === null) startTime = now + delayMs;
+      if (now < startTime) {
+        requestAnimationFrame(tick);
+        return;
+      }
+      var t = (now - startTime) / duration;
+      if (t >= 1) {
+        el.textContent = finalText;
+        delete el.dataset.countTarget;
+        return;
+      }
+      var eased = 1 - Math.pow(1 - t, 3); // ease-out cubic
+      el.textContent = formatNumeral(parsed.value * eased, parsed.kind);
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function countUpSection(section) {
+    if (motionReduced) return;
+    var nums = section.querySelectorAll("[data-bind]");
+    var counter = 0;
+    nums.forEach(function (n) {
+      if (!n.dataset.countTarget) return; // wasn't staged (non-numeric or already animated)
+      startCountUp(n, counter * 45);
+      counter++;
+    });
   }
 
   // ---------- Inline drag-number (reactive numeral) ----------
@@ -740,6 +1613,8 @@
       E0: E0, S0: S0, i: state.i, s: state.s,
       income: cls, housing: state.housing, size: state.persons
     };
+
+    writeStateToHash();
   }
 
   // ---------- SVG charts ----------
@@ -793,15 +1668,15 @@
     var svg =
       '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img">' +
       '<style>' +
-        '.line-e { fill: none; stroke: #B91C1C; stroke-width: 2; }' +
-        '.line-s { fill: none; stroke: #111; stroke-width: 2; }' +
-        '.ax { font: 11px var(--sans, sans-serif); fill: #6B7280; }' +
+        '.line-e { fill: none; stroke: var(--accent); stroke-width: 2; }' +
+        '.line-s { fill: none; stroke: var(--text); stroke-width: 2; }' +
+        '.ax { font: 11px var(--sans, sans-serif); fill: var(--muted); }' +
         '.end-label { font: 11px var(--sans, sans-serif); }' +
-        '.end-e { fill: #B91C1C; font-weight: 600; }' +
-        '.end-s { fill: #111; font-weight: 600; }' +
-        '.cross-line { stroke: #B91C1C; stroke-width: 1; stroke-dasharray: 3 4; opacity: 0.55; }' +
-        '.cross-label { font: 11px var(--sans, sans-serif); fill: #B91C1C; font-weight: 600; }' +
-        '.baseline { stroke: #E7E5E0; stroke-width: 1; }' +
+        '.end-e { fill: var(--accent); font-weight: 600; }' +
+        '.end-s { fill: var(--text); font-weight: 600; }' +
+        '.cross-line { stroke: var(--accent); stroke-width: 1; stroke-dasharray: 3 4; opacity: 0.55; }' +
+        '.cross-label { font: 11px var(--sans, sans-serif); fill: var(--accent); font-weight: 600; }' +
+        '.baseline { stroke: var(--rule); stroke-width: 1; }' +
       '</style>' +
       '<line x1="' + padL + '" y1="' + y(0) + '" x2="' + (W - padR) + '" y2="' + y(0) + '" class="baseline" />' +
       yTicks + xTicks +
@@ -811,6 +1686,25 @@
       endLabels +
       '</svg>';
     el("chart-main").innerHTML = svg;
+    if (firstMain && !motionReduced) preStageMainChart();
+  }
+
+  function preStageMainChart() {
+    var svgEl = document.querySelector("#chart-main svg");
+    if (!svgEl) return;
+    ["line-e", "line-s"].forEach(function (cls) {
+      var line = svgEl.querySelector("." + cls);
+      if (!line) return;
+      try {
+        var len = line.getTotalLength();
+        if (len > 0) {
+          line.style.strokeDasharray = String(len);
+          line.style.strokeDashoffset = String(len);
+        }
+      } catch (e) {}
+    });
+    var fades = svgEl.querySelectorAll(".end-label, .cross-line, .cross-label");
+    fades.forEach(function (el) { el.style.opacity = "0"; });
   }
 
   function niceCeil(v) {
@@ -830,9 +1724,9 @@
     var W = 560, H = 220;
     var padL = 48, padR = 60, padT = 16, padB = 32;
     var groups = [
-      { id: "low", color: "#B91C1C", label: "Low" },
-      { id: "middle", color: "#111", label: "Middle" },
-      { id: "high", color: "#6B7280", label: "High" }
+      { id: "low", cls: "cmp-low", label: "Low" },
+      { id: "middle", cls: "cmp-mid", label: "Middle" },
+      { id: "high", cls: "cmp-hi", label: "High" }
     ];
     var allRows = {};
     var maxRed = 0;
@@ -855,13 +1749,13 @@
     var paths = groups.map(function (g) {
       var rows = allRows[g.id];
       var d = "M" + rows.map(function (r, i) { return x(i).toFixed(1) + "," + y(r.red).toFixed(1); }).join(" L");
-      return '<path d="' + d + '" fill="none" stroke="' + g.color + '" stroke-width="1.6" />';
+      return '<path d="' + d + '" fill="none" class="cmp-line ' + g.cls + '" stroke-width="1.6" />';
     }).join("");
 
     var labels = groups.map(function (g) {
       var rows = allRows[g.id];
       var lastY = y(rows[rows.length - 1].red);
-      return '<text x="' + (W - padR + 6) + '" y="' + (lastY + 4) + '" class="cmp-label" style="fill:' + g.color + '">' + g.label + ' ' + rows[rows.length - 1].red.toFixed(1) + '%</text>';
+      return '<text x="' + (W - padR + 6) + '" y="' + (lastY + 4) + '" class="cmp-label ' + g.cls + '">' + g.label + ' ' + rows[rows.length - 1].red.toFixed(1) + '%</text>';
     }).join("");
 
     var xTicks = [0, 5, 10].map(function (i) {
@@ -874,9 +1768,12 @@
     var svg =
       '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img">' +
       '<style>' +
-        '.ax { font: 10px var(--sans, sans-serif); fill: #6B7280; }' +
+        '.ax { font: 10px var(--sans, sans-serif); fill: var(--muted); }' +
         '.cmp-label { font: 11px var(--sans, sans-serif); font-weight: 600; }' +
-        '.baseline { stroke: #E7E5E0; stroke-width: 1; }' +
+        '.baseline { stroke: var(--rule); stroke-width: 1; }' +
+        '.cmp-low  { stroke: var(--accent); fill: var(--accent); }' +
+        '.cmp-mid  { stroke: var(--text); fill: var(--text); }' +
+        '.cmp-hi   { stroke: var(--muted); fill: var(--muted); }' +
       '</style>' +
       '<line x1="' + padL + '" y1="' + y(0) + '" x2="' + (W - padR) + '" y2="' + y(0) + '" class="baseline" />' +
       yTicks + xTicks + paths + labels +
@@ -897,6 +1794,103 @@
     el("caption-compare").innerHTML =
       "Steepest erosion over ten years: <strong>" + steepest.label.toLowerCase() + "-income</strong> households, dropping " +
       drop.toFixed(1) + " percentage points.";
+
+    if (firstCompare && !motionReduced) preStageCompareChart();
+  }
+
+  function preStageCompareChart() {
+    var svgEl = document.querySelector("#chart-compare svg");
+    if (!svgEl) return;
+    var lines = svgEl.querySelectorAll("path");
+    lines.forEach(function (line) {
+      try {
+        var len = line.getTotalLength();
+        if (len > 0) {
+          line.style.strokeDasharray = String(len);
+          line.style.strokeDashoffset = String(len);
+        }
+      } catch (e) {}
+    });
+    var labels = svgEl.querySelectorAll(".cmp-label");
+    labels.forEach(function (el) { el.style.opacity = "0"; });
+  }
+
+  // ---------- Scroll-reveal + chart draw-in ----------
+
+  function animateMainIn() {
+    var svgEl = document.querySelector("#chart-main svg");
+    if (!svgEl) return;
+    ["line-e", "line-s"].forEach(function (cls, idx) {
+      var line = svgEl.querySelector("." + cls);
+      if (!line) return;
+      line.style.transitionDelay = (idx * 0.15) + "s";
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () { line.style.strokeDashoffset = "0"; });
+      });
+    });
+    var fades = svgEl.querySelectorAll(".end-label, .cross-line, .cross-label");
+    fades.forEach(function (el) {
+      el.style.transitionDelay = "1.0s";
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () { el.style.opacity = "1"; });
+      });
+    });
+  }
+
+  function animateCompareIn() {
+    var svgEl = document.querySelector("#chart-compare svg");
+    if (!svgEl) return;
+    var lines = svgEl.querySelectorAll("path");
+    lines.forEach(function (line, idx) {
+      line.style.transitionDelay = (idx * 0.1) + "s";
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () { line.style.strokeDashoffset = "0"; });
+      });
+    });
+    var labels = svgEl.querySelectorAll(".cmp-label");
+    labels.forEach(function (el) {
+      el.style.transitionDelay = "0.7s";
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () { el.style.opacity = "1"; });
+      });
+    });
+  }
+
+  function setupReveal() {
+    if (motionReduced || !("IntersectionObserver" in window)) {
+      firstMain = false;
+      firstCompare = false;
+      return;
+    }
+    var revealables = document.querySelectorAll(".moment, .pull-quote, .essay > footer");
+    revealables.forEach(function (m) { m.classList.add("pre-reveal"); });
+
+    // Stage every numeric data-bind element to start at 0 for count-up reveal.
+    document.querySelectorAll("[data-bind]").forEach(function (el) {
+      var parsed = parseNumeral(el.textContent);
+      if (!parsed) return; // non-numeric (e.g., "middle"); skip
+      el.dataset.countTarget = el.textContent;
+      el.textContent = formatNumeral(0, parsed.kind);
+    });
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        e.target.classList.remove("pre-reveal");
+        observer.unobserve(e.target);
+        // Slight delay so the fade-up transition starts before the digits begin ticking.
+        window.setTimeout(function () { countUpSection(e.target); }, 150);
+        if (e.target.id === "years" && firstMain) {
+          firstMain = false;
+          window.setTimeout(animateMainIn, 250);
+        } else if (e.target.id === "across" && firstCompare) {
+          firstCompare = false;
+          window.setTimeout(animateCompareIn, 250);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: "0px 0px -6% 0px" });
+
+    revealables.forEach(function (m) { observer.observe(m); });
   }
 
   // ---------- Wiring ----------
@@ -976,6 +1970,66 @@
     });
   }
 
+  function wireShareButton() {
+    var btn = el("share-btn");
+    var toast = el("share-toast");
+    if (!btn || !toast) return;
+
+    var toastTimer = null;
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add("show");
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = window.setTimeout(function () {
+        toast.classList.remove("show");
+      }, 2400);
+    }
+
+    btn.addEventListener("click", function () {
+      // Force-write hash immediately so the URL is current
+      if (hashTimer) {
+        clearTimeout(hashTimer);
+        hashTimer = null;
+      }
+      var parts = [
+        "inc=" + state.income,
+        "p=" + state.persons,
+        "h=" + state.housing,
+        "i=" + (state.i * 100).toFixed(2).replace(/\.?0+$/, ""),
+        "s=" + (state.s * 100).toFixed(2).replace(/\.?0+$/, ""),
+        "t=" + state.tau
+      ];
+      if (state.manualBasket) {
+        parts.push("e=" + CATEGORIES.map(function (c) { return state.expenses[c.key]; }).join(","));
+      }
+      var newHash = "#" + parts.join("&");
+      try { history.replaceState(null, "", newHash); } catch (err) {}
+      var url = window.location.href;
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(
+          function () { showToast("Link copied ✓"); },
+          function () { showToast("Couldn't copy — select the URL bar"); }
+        );
+      } else {
+        var ta = document.createElement("textarea");
+        ta.value = url;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "absolute";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand("copy");
+          showToast("Link copied ✓");
+        } catch (e) {
+          showToast("Press ⌘C / Ctrl+C to copy");
+        }
+        document.body.removeChild(ta);
+      }
+    });
+  }
+
   function wireExport() {
     el("csv-link").addEventListener("click", function (e) {
       e.preventDefault();
@@ -1050,6 +2104,8 @@
 
   // ---------- Boot ----------
 
+  setupThemeToggle();
+  loadStateFromHash();
   wireIncomeSlider();
   wireIncomeNumber();
   wirePersons();
@@ -1057,7 +2113,84 @@
   wireRates();
   wireHousing();
   wireExport();
+  wireShareButton();
   refresh();
+  computeReadTime();
+  setupReveal();
+  setupReadProgress();
+
+  function setupThemeToggle() {
+    var btn = el("theme-toggle");
+    if (!btn) return;
+    var stored = null;
+    try { stored = localStorage.getItem("col-theme"); } catch (e) {}
+    var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var initial = (stored === "light" || stored === "dark") ? stored : (prefersDark ? "dark" : "light");
+    applyTheme(initial, false);
+
+    btn.addEventListener("click", function () {
+      var current = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+      var next = current === "dark" ? "light" : "dark";
+      applyTheme(next, true);
+      try { localStorage.setItem("col-theme", next); } catch (e) {}
+    });
+
+    // Follow system preference changes if user hasn't explicitly chosen.
+    if (window.matchMedia) {
+      var mq = window.matchMedia("(prefers-color-scheme: dark)");
+      var listener = function (e) {
+        var hasStored = null;
+        try { hasStored = localStorage.getItem("col-theme"); } catch (err) {}
+        if (hasStored) return;
+        applyTheme(e.matches ? "dark" : "light", true);
+      };
+      if (mq.addEventListener) mq.addEventListener("change", listener);
+      else if (mq.addListener) mq.addListener(listener);
+    }
+
+    function applyTheme(theme, animate) {
+      document.documentElement.setAttribute("data-theme", theme);
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute("content", theme === "dark" ? "#0F100E" : "#FAFAF7");
+      var label = theme === "dark" ? "Switch to light mode" : "Switch to dark mode";
+      btn.setAttribute("aria-label", label);
+      btn.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+    }
+  }
+
+  function setupReadProgress() {
+    var bar = el("read-progress");
+    if (!bar) return;
+    var ticking = false;
+    function update() {
+      var doc = document.documentElement;
+      var scrolled = window.scrollY || window.pageYOffset || 0;
+      var max = (doc.scrollHeight - window.innerHeight) || 1;
+      var ratio = Math.max(0, Math.min(1, scrolled / max));
+      bar.style.transform = "scaleX(" + ratio + ")";
+      ticking = false;
+    }
+    function onScroll() {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    update();
+  }
+
+  function computeReadTime() {
+    var target = el("read-time");
+    if (!target) return;
+    var article = document.querySelector(".essay");
+    if (!article) return;
+    var text = article.textContent || "";
+    var words = text.trim().split(/\s+/).filter(Boolean).length;
+    var minutes = Math.max(1, Math.round(words / 230));
+    target.textContent = "~" + minutes + " min read";
+  }
 })();
   </script>
 </body>
