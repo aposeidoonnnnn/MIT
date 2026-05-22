@@ -649,6 +649,114 @@
       border-bottom-color: var(--accent);
     }
 
+    /* ===== Chapters menu ===== */
+    .chapters {
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      z-index: 105;
+      font-family: var(--sans);
+      max-width: 14rem;
+    }
+    .chapters-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--rule);
+      border-radius: 999px;
+      padding: 0.42rem 0.85rem;
+      font: inherit;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: border-color 200ms ease, color 200ms ease, background-color 280ms ease;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+    .chapters-toggle:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .chapters-toggle:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+    .chapters-toggle .arrow {
+      width: 10px;
+      height: 10px;
+      transition: transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .chapters[data-open="true"] .chapters-toggle .arrow { transform: rotate(180deg); }
+    .chapters-list {
+      list-style: none;
+      margin: 0.5rem 0 0;
+      padding: 0.45rem 0.4rem;
+      background: var(--bg);
+      border: 1px solid var(--rule);
+      border-radius: 10px;
+      box-shadow: 0 6px 28px rgba(0,0,0,0.06);
+      font-size: 0.82rem;
+      opacity: 0;
+      transform: translateY(-6px);
+      pointer-events: none;
+      transition: opacity 200ms ease, transform 200ms ease, background-color 280ms ease, border-color 280ms ease;
+    }
+    .chapters[data-open="true"] .chapters-list {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .chapters-list li { margin: 0; }
+    .chapters-list a {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.4rem 0.6rem;
+      text-decoration: none;
+      color: var(--muted);
+      border-radius: 5px;
+      transition: color 200ms ease, background 200ms ease;
+      line-height: 1.3;
+      white-space: nowrap;
+    }
+    .chapters-list a:hover {
+      color: var(--text);
+      background: var(--soft);
+    }
+    .chapters-list a::before {
+      content: "";
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--rule);
+      flex-shrink: 0;
+      transition: background 200ms ease, transform 200ms ease;
+    }
+    .chapters-list a.active {
+      color: var(--text);
+      font-weight: 600;
+    }
+    .chapters-list a.active::before {
+      background: var(--accent);
+      transform: scale(1.6);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .chapters-toggle, .chapters-toggle .arrow,
+      .chapters-list, .chapters-list a, .chapters-list a::before {
+        transition: none;
+      }
+    }
+    @media print {
+      .chapters { display: none !important; }
+    }
+    @media (max-width: 28rem) {
+      .chapters-toggle { padding: 0.38rem 0.7rem; font-size: 0.66rem; }
+      .chapters-list { font-size: 0.78rem; }
+    }
+
     /* ===== Theme toggle ===== */
     .theme-toggle {
       position: fixed;
@@ -938,6 +1046,26 @@
 </head>
 <body>
   <div id="read-progress" aria-hidden="true"></div>
+  <nav class="chapters" id="chapters" data-open="false" aria-label="Table of contents">
+    <button class="chapters-toggle" id="chapters-toggle" type="button" aria-expanded="false" aria-controls="chapters-list">
+      Chapters
+      <svg class="arrow" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+        <path d="M2 4 L5 7 L8 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <ul class="chapters-list" id="chapters-list" role="list">
+      <li><a href="#question" data-target="question">Problem statement</a></li>
+      <li><a href="#hook" data-target="hook">01 · Household profile</a></li>
+      <li><a href="#basket" data-target="basket">02 · Monthly expenditure</a></li>
+      <li><a href="#support" data-target="support">03 · Budget support</a></li>
+      <li><a href="#today" data-target="today">04 · Current effectiveness</a></li>
+      <li><a href="#years" data-target="years">05 · Ten-year projection</a></li>
+      <li><a href="#across" data-target="across">06 · Across income groups</a></li>
+      <li><a href="#model" data-target="model">07 · Mathematical model</a></li>
+      <li><a href="#findings" data-target="findings">Discussion</a></li>
+      <li><a href="#methodology" data-target="methodology">Methodology</a></li>
+    </ul>
+  </nav>
   <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Switch to dark mode" aria-pressed="false" title="Switch theme">
     <svg class="icon-moon" viewBox="0 0 20 20" aria-hidden="true">
       <path d="M16.5 12.4A7.5 7.5 0 1 1 7.6 3.5a6 6 0 0 0 8.9 8.9z" fill="currentColor"/>
@@ -959,42 +1087,35 @@
   <article class="essay">
     <header>
       <h1>How much of your bills does the Singapore Budget actually cover?</h1>
-      <p class="deck">When inflation outruns subsidy growth — the usual case — the share of your monthly expenses that government support covers decays geometrically. This page lets you find your household's number, and watch where it goes over the next ten years.</p>
+      <p class="deck">When inflation outpaces subsidy growth, which is the typical case, the proportion of household expenditure covered by government support decays geometrically. This investigation determines the figure for a given household profile and projects its trajectory across a ten-year horizon.</p>
       <p class="byline">
         <span>By <span class="author">Ashlyn, Keng Tuan, Lingli</span></span>
         <span class="sep" aria-hidden="true">·</span>
         <span class="sep" aria-hidden="true">·</span>
       </p>
-      <p class="reader-hint">Drag the underlined numbers as you read — everything below recalculates as you go.</p>
+      <p class="reader-hint">All underlined values are interactive. Figures, charts, and projections below recalculate as inputs are adjusted.</p>
     </header>
 
     <section class="moment" id="question">
       <h2 class="preface-heading">Problem statement</h2>
-      <p>Singapore's annual Budget delivers a bundle of cost-of-living support — <span class="def" tabindex="0" data-def="Community Development Council vouchers — household-level cost-of-living top-ups, redeemable at participating supermarkets and hawker stalls.">CDC</span> vouchers, the <span class="def" tabindex="0" data-def="GST Voucher — a package of government transfers (cash, U-Save and MediSave components) designed to offset the Goods and Services Tax for lower- and middle-income households.">GST Voucher</span> (cash and <span class="def" tabindex="0" data-def="Utilities-Save — quarterly rebates credited against utility bills for eligible HDB households.">U-Save</span>), and transport top-ups — each tiered by housing type and per-capita household income. The question this page sets out to answer is straightforward to state and surprisingly subtle to measure:</p>
+      <p>Singapore's annual Budget delivers a bundle of cost-of-living support comprising <span class="def" tabindex="0" data-def="Community Development Council vouchers. Household-level cost-of-living top-ups, redeemable at participating supermarkets and hawker stalls.">CDC</span> vouchers, the <span class="def" tabindex="0" data-def="GST Voucher. A package of government transfers (cash, U-Save and MediSave components) designed to offset the Goods and Services Tax for lower and middle-income households.">GST Voucher</span> (cash and <span class="def" tabindex="0" data-def="Utilities-Save. Quarterly rebates credited against utility bills for eligible HDB households.">U-Save</span>), and transport top-ups, each tiered by housing type and per-capita household income. The question this page sets out to answer is straightforward to state and surprisingly subtle to measure:</p>
       <p class="headline">How effective are Singapore Budget cost-of-living support measures in reducing household expenditure across different income groups?</p>
-      <p>"Effective" here is operationalised as three concrete, measurable things — each addressed by a later section of this page:</p>
-      <ol class="question-list">
-        <li><strong>Coverage today.</strong> At year 0, what fraction of monthly expenses does total support cover? — i.e. <em>S</em>(0) ÷ <em>E</em>(0). Addressed in <a href="#today">section 04</a>.</li>
-        <li><strong>Persistence over time.</strong> Does that coverage hold as inflation outpaces subsidy growth? In what year does effectiveness first fall below a chosen threshold <em>τ</em>? Addressed in <a href="#years">section 05</a>.</li>
-        <li><strong>Equity across groups.</strong> Do low-income households receive proportionally more support than high-income ones, and does that gap widen or narrow over ten years? Addressed in <a href="#across">section 06</a>.</li>
-      </ol>
-      <p class="aside">Scope of the model: geometric growth in both expenses and support, a 10-year horizon, and approximate 2025 Budget figures (teaching values, not official <span class="def" tabindex="0" data-def="Ministry of Finance — the Singapore government department that produces the annual Budget.">MOF</span> amounts). Behavioural responses, in-kind benefits absorbed at the provider level (e.g., subsidised polyclinic visits, <span class="def" tabindex="0" data-def="Housing &amp; Development Board — the statutory board that builds and manages most of Singapore's public housing.">HDB</span> grants), and schemes beyond the three listed above are out of scope. The maths underpinning all three measures is laid out in <a href="#model">section 07</a>.</p>
     </section>
 
     <section class="moment" id="hook">
-      <h2><span class="step-num">01</span>The household</h2>
-      <p>Your household earns <span class="rnum" data-bind="income">S$8,000</span> a month across <span class="rnum" data-bind="persons">2</span> people. That works out to <span class="rnum" data-bind="pchi">S$4,000</span> per person — placing you in the <span class="rnum" data-bind="class-label">middle</span>-income band on Singapore's <span class="def" tabindex="0" data-def="Per-capita household income — monthly household income divided by the number of household members; used by means-tested schemes to determine eligibility.">PCHI</span> scale.</p>
+      <h2><span class="step-num">01</span>Household profile</h2>
+      <p>Your household earns <span class="rnum" data-bind="income">S$8,000</span> monthly across <span class="rnum" data-bind="persons">2</span> members. Per-capita household income is therefore <span class="rnum" data-bind="pchi">S$4,000</span>, which falls within the <span class="rnum" data-bind="class-label">middle</span>-income band under Singapore's <span class="def" tabindex="0" data-def="Per-capita household income. Monthly household income divided by the number of household members; used by means-tested schemes to determine eligibility.">PCHI</span> framework.</p>
       <div class="income-slider">
         <input type="range" id="income-range" min="0" max="100000" step="500" value="8000" aria-label="Monthly household income in Singapore dollars" />
         <div class="scale" aria-hidden="true"><span>S$0</span><span>S$50K</span><span>S$100K</span></div>
       </div>
-      <p class="aside">The slider above moves in S$500 steps. The household-size number is also draggable. PCHI thresholds used here: low ≤ S$1,500, middle S$1,501–5,000, high above S$5,000.</p>
+      <p class="aside">The slider increments in S$500 steps; the household-size value is also adjustable. PCHI thresholds applied in this model: low ≤ S$1,500, middle S$1,501–5,000, high &gt; S$5,000.</p>
     </section>
 
     <section class="moment" id="basket">
-      <h2><span class="step-num">02</span>The basket</h2>
-      <p>A household like yours spends about <span class="rnum" data-bind="e0">S$2,260</span> a month: roughly <span class="rnum" data-bind="food">S$620</span> on food, <span class="rnum" data-bind="transport">S$420</span> on transport, <span class="rnum" data-bind="utilities">S$160</span> on utilities, <span class="rnum" data-bind="education">S$280</span> on education, <span class="rnum" data-bind="healthcare">S$260</span> on healthcare, and <span class="rnum" data-bind="misc">S$520</span> on everything else.</p>
-      <p class="aside">Categories are draggable individually. Baselines vary with housing type:
+      <h2><span class="step-num">02</span>Monthly expenditure</h2>
+      <p>For a household of this profile, estimated monthly expenditure totals <span class="rnum" data-bind="e0">S$2,260</span>, comprising approximately <span class="rnum" data-bind="food">S$620</span> on food, <span class="rnum" data-bind="transport">S$420</span> on transport, <span class="rnum" data-bind="utilities">S$160</span> on utilities, <span class="rnum" data-bind="education">S$280</span> on education, <span class="rnum" data-bind="healthcare">S$260</span> on healthcare, and <span class="rnum" data-bind="misc">S$520</span> on remaining categories.</p>
+      <p class="aside">Each category may be adjusted individually. Baselines are scaled by housing type:
         <select id="housing" class="housing-pick" aria-label="Housing type">
           <option value="hdb12">1–2 room HDB</option>
           <option value="hdb3">3-room HDB</option>
@@ -1006,22 +1127,22 @@
     </section>
 
     <section class="moment" id="support">
-      <h2><span class="step-num">03</span>What the Budget gives back</h2>
-      <p>For your housing type and income band, the headline support package is roughly the following each year:</p>
+      <h2><span class="step-num">03</span>Budget support package</h2>
+      <p>For the given housing type and income band, the annual support package is approximately as follows:</p>
       <ul class="scheme-list">
-        <li><strong>CDC vouchers</strong> — <span class="rnum" data-bind="cdc">S$400</span>, household-level, redeemable at supermarkets and hawkers.</li>
-        <li><strong>GSTV + U-Save</strong> — about <span class="rnum" data-bind="gst">S$880</span> combined; helps with utilities and offsets GST for lower-income households.</li>
-        <li><strong>Transport top-ups</strong> — modelled here as a flat <span class="rnum" data-bind="tr">S$200</span> per year.</li>
+        <li><strong>CDC vouchers</strong>: <span class="rnum" data-bind="cdc">S$400</span>, issued at the household level and redeemable at participating supermarkets and hawker stalls.</li>
+        <li><strong>GSTV + U-Save</strong>: approximately <span class="rnum" data-bind="gst">S$880</span> combined, offsetting utility costs and the Goods and Services Tax for lower-income households.</li>
+        <li><strong>Transport top-ups</strong>: modelled as a fixed <span class="rnum" data-bind="tr">S$200</span> per annum.</li>
       </ul>
-      <p>That comes to <span class="rnum" data-bind="annual">S$1,480</span> a year, or <span class="rnum" data-bind="s0">S$123</span> a month spread evenly.</p>
-      <p class="footnote">Scheme amounts are 2025-approximate teaching figures, not official MOF numbers. Eligibility and actual payouts are set by the Government.</p>
+      <p>The combined annual total is <span class="rnum" data-bind="annual">S$1,480</span>, equivalent to <span class="rnum" data-bind="s0">S$123</span> per month when distributed evenly.</p>
+      <p class="footnote">Scheme amounts are 2025 approximate figures used for illustrative purposes; they are not official MOF disbursements. Actual eligibility and payouts are determined by the Singapore Government.</p>
     </section>
 
     <section class="moment" id="today">
-      <h2><span class="step-num">04</span>Today's picture</h2>
-      <p class="headline">Right now, that support covers about <span class="rnum" data-bind="red0">5.4%</span> of your monthly costs.</p>
-      <p>Your net burden — what you'd cover yourself after subsidies — is <span class="rnum" data-bind="b0">S$2,137</span> a month.</p>
-      <p class="aside">That percentage is just S(0) ÷ E(0): support divided by expenses, expressed as a percent. We track this <em>effectiveness</em> over the next ten years in the chart below.</p>
+      <h2><span class="step-num">04</span>Current effectiveness</h2>
+      <p class="headline">At present, the support package covers approximately <span class="rnum" data-bind="red0">5.4%</span> of monthly expenditure.</p>
+      <p>The net burden, that is the residual amount borne by the household after subsidies, is <span class="rnum" data-bind="b0">S$2,137</span> per month.</p>
+      <p class="aside">This percentage is computed as S(0) ÷ E(0): support divided by expenditure, expressed as a proportion. The same <em>effectiveness ratio</em> is tracked over the ten-year horizon in the chart below.</p>
     </section>
 
     <aside class="pull-quote" role="note">
@@ -1029,39 +1150,39 @@
     </aside>
 
     <section class="moment" id="years">
-      <h2><span class="step-num">05</span>What ten years does</h2>
-      <p>Two things move over time: prices rise and the Budget grows. At <span class="rnum" data-bind="i">3.0%</span> annual inflation and <span class="rnum" data-bind="s">1.0%</span> annual subsidy growth, the two curves separate — and because each year's rise compounds on the previous one, the gap widens faster than the rates alone suggest. A 3% rate doesn't add 30% after a decade; it adds about 34%.</p>
+      <h2><span class="step-num">05</span>Ten-year projection</h2>
+      <p>Two quantities evolve over time: prices rise and the Budget grows. Under <span class="rnum" data-bind="i">3.0%</span> annual inflation and <span class="rnum" data-bind="s">1.0%</span> annual subsidy growth, the two curves diverge. Because each year's increase compounds on the previous one, the gap widens more rapidly than the headline rates alone would suggest. A 3.0% annual rate accumulates not to 30% after a decade, but to approximately 34%.</p>
       <div class="chart-wrap" id="chart-main" aria-label="Monthly expenses versus support over ten years"></div>
-      <p class="caption">At your effectiveness threshold of <span class="rnum" data-bind="tau">5%</span>, <span id="cross-narrative">…</span></p>
+      <p class="caption">At the specified effectiveness threshold of <span class="rnum" data-bind="tau">5%</span>, <span id="cross-narrative">…</span></p>
       <div class="share-row">
-        <button type="button" class="share-btn" id="share-btn" aria-label="Copy a permalink to this scenario">Copy link to this scenario</button>
+        <button type="button" class="share-btn" id="share-btn" aria-label="Copy a permanent link to this scenario">Copy permanent link to scenario</button>
         <span class="share-toast" id="share-toast" role="status" aria-live="polite"></span>
       </div>
     </section>
 
     <section class="moment" id="across">
-      <h2><span class="step-num">06</span>Across income groups</h2>
-      <p>Low-income households start with the largest proportional support — but the curve they sit on declines at a similar rate. The chart shows subsidy effectiveness (support as a percent of expenses) over ten years for each band, holding your housing type and the rates above constant.</p>
+      <h2><span class="step-num">06</span>Comparison across income groups</h2>
+      <p>Low-income households begin with the largest proportional support; however, the rate of decline is comparable across all three income bands. The chart presents subsidy effectiveness (support expressed as a percentage of expenditure) over ten years for each band, with housing type and growth rates held constant.</p>
       <div class="chart-wrap" id="chart-compare" aria-label="Reduction percent across income groups over ten years"></div>
       <p class="caption" id="caption-compare">…</p>
     </section>
 
     <section class="moment" id="model">
-      <h2><span class="step-num">07</span>The maths</h2>
-      <p>The whole page is built from three ideas: <em>geometric sequences</em>, the <em>ratio of two of them</em>, and a <em>logarithm</em> to find where one curve crosses a line. Here they are in order — read these and you'll understand exactly what every number above is doing.</p>
+      <h2><span class="step-num">07</span>Mathematical model</h2>
+      <p>The model rests on three concepts: <em>geometric sequences</em>, the <em>ratio of two such sequences</em>, and the use of <em>logarithms</em> to identify the point at which one curve crosses a specified value. Each is developed in turn below.</p>
       <div class="maths">
 
-        <h3><span class="ix">1</span>Compounding — geometric sequences</h3>
-        <p>When a price rises 3% in a year, it rises by 3% of <em>last year's</em> price, not 3% of the original. After two years that 3% has been applied to an already-3%-higher base, and so on. This is <strong>compound growth</strong>, and it's described by a recurrence — each term defined in terms of the previous:</p>
+        <h3><span class="ix">1</span>Compounding and geometric sequences</h3>
+        <p>When a price rises 3% in a year, it rises by 3% of <em>last year's</em> price, not 3% of the original. After two years that 3% has been applied to an already-3%-higher base, and so on. This is <strong>compound growth</strong>, described by a recurrence in which each term is defined in terms of the previous one:</p>
         <p class="f">E(n + 1) = E(n) · (1 + i),  &nbsp; E(0) given</p>
-        <p>A sequence built by multiplying by a fixed ratio is called a <strong>geometric sequence</strong>. Unrolling the recurrence — apply it once, then again, then again — gives a closed form:</p>
+        <p>A sequence built by multiplying by a fixed ratio is called a <strong>geometric sequence</strong>. Unrolling the recurrence (apply it once, then again, then again) gives a closed form:</p>
         <p class="f">E(n) = E(0) · (1 + i)<sup>n</sup></p>
         <p>Support follows the same shape with its own growth rate <em>s</em>:</p>
         <p class="f">S(n) = S(0) · (1 + s)<sup>n</sup></p>
         <p class="takeaway">Try setting inflation to 0% in section 5: the expense line flattens, because (1 + 0)<sup>n</sup> = 1 for every <em>n</em>. Compounding only matters when the rate is non-zero.</p>
 
-        <h3><span class="ix">2</span>Why the curves diverge — the ratio of two geometrics</h3>
-        <p>The <strong>net burden</strong> — what the household carries after subsidies — is the difference of two geometric sequences:</p>
+        <h3><span class="ix">2</span>Curve divergence: the ratio of two geometric sequences</h3>
+        <p>The <strong>net burden</strong>, the amount the household carries after subsidies, is the difference of two geometric sequences:</p>
         <p class="f">B(n) = E(n) − S(n) = E(0)(1+i)<sup>n</sup> − S(0)(1+s)<sup>n</sup></p>
         <p>B(n) itself is <em>not</em> a geometric sequence; it's the difference of two. But to ask "how well does support keep up with prices?" the cleaner quantity is the <strong>ratio</strong>, which we call effectiveness:</p>
         <p class="f">S(n) / E(n) = [S(0)/E(0)] · [(1 + s)/(1 + i)]<sup>n</sup></p>
@@ -1071,39 +1192,39 @@
           <li><strong>i = s</strong> → ratio = 1, effectiveness is constant forever and the two lines stay parallel.</li>
           <li><strong>i &lt; s</strong> → ratio &gt; 1, support gradually catches up.</li>
         </ul>
-        <p class="takeaway">"Erosion" isn't a metaphor here — it's literally multiplicative decay by a fixed factor each year, which is why the effectiveness line in the chart looks like a smooth downward curve rather than a straight line.</p>
+        <p class="takeaway">"Erosion" is not a metaphor here. It is literally multiplicative decay by a fixed factor each year, which is why the effectiveness line in the chart looks like a smooth downward curve rather than a straight line.</p>
 
-        <h3><span class="ix">3</span>Year-on-year pressure — the discrete derivative</h3>
+        <h3><span class="ix">3</span>Year-on-year change: the discrete derivative</h3>
         <p>A continuous function has a derivative; a sequence indexed by integer years has a <strong>discrete difference</strong>. ΔB(n) = B(n) − B(n − 1) tells you how much worse <em>this</em> year is than <em>last</em> year. Substituting the geometric form and simplifying (subtract B(n) from B(n−1), then factor):</p>
         <p class="f">ΔB(n) = E(0)(1 + i)<sup>n−1</sup> · i  −  S(0)(1 + s)<sup>n−1</sup> · s</p>
         <p>Read it as "this year's added expense pressure minus this year's added relief." Because the expense base E(0) is almost always much larger than the support base S(0), and (1+i)<sup>n−1</sup> grows faster than (1+s)<sup>n−1</sup> when i &gt; s, the first term dominates and ΔB stays positive and grows over time.</p>
-        <p class="takeaway">If you set i = s and E(0) &gt; S(0), ΔB still stays positive — even matched growth rates can't close a starting gap. But ΔB stops <em>accelerating</em>, because each year adds the same absolute increment.</p>
+        <p class="takeaway">If you set i = s and E(0) &gt; S(0), ΔB still stays positive; even matched growth rates cannot close a starting gap. But ΔB stops <em>accelerating</em>, because each year adds the same absolute increment.</p>
 
-        <h3><span class="ix">4</span>Finding the threshold year — solving with a logarithm</h3>
-        <p>Set yourself a threshold τ for "support that's still meaningful" — the page defaults to 5%. When does effectiveness first drop below it? Start by setting S(n)/E(n) equal to τ/100:</p>
+        <h3><span class="ix">4</span>Determining the threshold year via logarithms</h3>
+        <p>Set yourself a threshold τ for "support that's still meaningful" (the page defaults to 5%). When does effectiveness first drop below it? Start by setting S(n)/E(n) equal to τ/100:</p>
         <p class="f">[S(0)/E(0)] · [(1 + s)/(1 + i)]<sup>n</sup> = τ / 100</p>
         <p>Rearrange so the power-of-<em>n</em> term is alone on one side:</p>
         <p class="f">[(1 + s)/(1 + i)]<sup>n</sup> = (τ · E(0)) / (100 · S(0))</p>
-        <p>To pull <em>n</em> out of the exponent, take the natural logarithm of both sides — this is exactly the situation logarithms were invented for:</p>
+        <p>To pull <em>n</em> out of the exponent, take the natural logarithm of both sides. This is exactly the situation logarithms were invented for:</p>
         <p class="f">n · ln((1 + s)/(1 + i)) = ln((τ · E(0)) / (100 · S(0)))</p>
         <p>Solve for <em>n</em> and round up, because years are integers and we want the <em>first</em> year the condition holds:</p>
         <p class="f">n* = ⌈ ln(τ · E(0) / (100 · S(0))) / ln((1 + s)/(1 + i)) ⌉</p>
         <p>This closed form is exactly where the page draws the vertical hairline in the chart. Two edge cases the formula naturally handles:</p>
         <ul>
           <li>If <strong>i ≤ s</strong>, the denominator ln((1+s)/(1+i)) is non-negative, the ratio S(n)/E(n) never decreases, and no threshold year exists. The page reports "stays above the threshold through year 10."</li>
-          <li>If the household already starts below the threshold at year 0 — i.e. τ · E(0) ≥ 100 · S(0) — the formula gives n* = 0.</li>
+          <li>If the household already starts below the threshold at year 0 (i.e. τ · E(0) ≥ 100 · S(0)), the formula gives n* = 0.</li>
         </ul>
 
-        <h3><span class="ix">★</span>The whole model on one line</h3>
-        <p>Compounding gives you two rising curves. Their ratio decays geometrically when one rate beats the other. A single logarithm tells you when that ratio crosses any threshold you care about. Everything else on this page — every number, every chart, every caption — is one of those three quantities evaluated at some <em>n</em>.</p>
+        <h3><span class="ix">★</span>Summary</h3>
+        <p>Compounding gives you two rising curves. Their ratio decays geometrically when one rate beats the other. A single logarithm tells you when that ratio crosses any threshold you care about. Everything else on this page (every number, every chart, every caption) is one of those three quantities evaluated at some <em>n</em>.</p>
       </div>
     </section>
 
     <section class="moment" id="findings">
-      <h2 class="preface-heading">What this means</h2>
-      <p>The structural finding is simple, and the page makes it visible: whenever inflation outruns subsidy growth — the typical case in any developed economy — support effectiveness, the ratio S(n) ÷ E(n), erodes geometrically. Not linearly. Not at a rate you can dismiss by quoting last year's headline number. The decay factor is exactly (1 + s) ÷ (1 + i), and it compounds on itself each year.</p>
+      <h2 class="preface-heading">Discussion</h2>
+      <p>The structural finding is simple, and the page makes it visible: whenever inflation outruns subsidy growth (the typical case in any developed economy), the support effectiveness ratio S(n) ÷ E(n) erodes geometrically. Not linearly. Not at a rate you can dismiss by quoting last year's headline number. The decay factor is exactly (1 + s) ÷ (1 + i), and it compounds on itself each year.</p>
       <p>What this page is not: a forecast. The expense baselines are synthetic teaching values, not households surveyed by SingStat; the support figures are 2025-approximate, not what any specific household actually receives; the model ignores behavioural responses, in-kind subsidies (subsidised polyclinic visits, HDB grants, education vouchers) and the dozens of smaller schemes that round out a real Budget package. Real cost-of-living arithmetic is messier than two compounding curves.</p>
-      <p>What would actually change the picture? Four levers fall out of the maths directly: raise <em>s</em> so it matches or exceeds <em>i</em>; index each scheme to the CPI so <em>s</em> tracks <em>i</em> automatically; broaden the eligible expense basket so a larger fraction of E(n) is reached by support; or shift from cash transfers to subsidised provision, where the price paid by households moves with the subsidy rather than the market. Different levers carry different fiscal and political costs. The model doesn't pick one — but it makes the tradeoff visible.</p>
+      <p>What would actually change the picture? Four levers fall out of the maths directly: raise <em>s</em> so it matches or exceeds <em>i</em>; index each scheme to the CPI so <em>s</em> tracks <em>i</em> automatically; broaden the eligible expense basket so a larger fraction of E(n) is reached by support; or shift from cash transfers to subsidised provision, where the price paid by households moves with the subsidy rather than the market. Different levers carry different fiscal and political costs. The model doesn't pick one, but it does make the tradeoff visible.</p>
     </section>
 
     <section class="moment" id="methodology">
@@ -1112,11 +1233,11 @@
 
       <h3 class="sub-h3">Where the numbers come from</h3>
       <ul class="methodology-list">
-        <li><strong>Expense baselines</strong> (section 2): synthetic, structured loosely after SingStat's <em>Household Expenditure Survey</em> bands. Each baseline is the monthly amount for a reference two-person household; the page then scales by household size and applies a small housing-type multiplier. Treat as illustrative — your real basket is the one you measure yourself.</li>
+        <li><strong>Expense baselines</strong> (section 2): synthetic, structured loosely after SingStat's <em>Household Expenditure Survey</em> bands. Each baseline is the monthly amount for a reference two-person household; the page then scales by household size and applies a small housing-type multiplier. Treat as illustrative; your real basket is the one you measure yourself.</li>
         <li><strong>CDC voucher amounts</strong> (section 3): 2025-approximate, tiered by housing type. The model uses S$500 / S$400 / S$300 / S$200 for 1–2-room, 3–4-room, 5-room HDB and private respectively.</li>
-        <li><strong>GST Voucher and U-Save</strong>: an approximate annualised bundle, tiered by income band and housing type. Real eligibility and payouts depend on per-capita household income, age, and assessable income — set by the Government in each Budget.</li>
+        <li><strong>GST Voucher and U-Save</strong>: an approximate annualised bundle, tiered by income band and housing type. Real eligibility and payouts depend on per-capita household income, age, and assessable income, all of which are set by the Government in each Budget.</li>
         <li><strong>Transport top-ups</strong>: modelled as a flat S$200 per year per household for illustrative simplicity. The actual schemes are more granular and means-tested.</li>
-        <li><strong>PCHI thresholds</strong>: S$1,500 and S$5,000 — the cutoffs used by several MSF and Singapore Budget programmes for the "low" and "high" boundaries. Both have moved over time and may move again.</li>
+        <li><strong>PCHI thresholds</strong>: S$1,500 and S$5,000, the cutoffs used by several MSF and Singapore Budget programmes for the "low" and "high" boundaries. Both have moved over time and may move again.</li>
         <li><strong>Inflation default (3.0%)</strong>: roughly aligned with Singapore's <em>headline</em> CPI in recent years. The actual MAS Core Inflation differs and is the typical reference for policy. Move the slider and watch what changes.</li>
         <li><strong>Subsidy growth default (1.0%)</strong>: a placeholder. The Singapore Budget does not commit to a fixed annual escalation; each year's enhancements are announced in the Budget speech. The default exists so the page has a starting state.</li>
       </ul>
@@ -1124,17 +1245,17 @@
       <h3 class="sub-h3">Assumptions worth flagging</h3>
       <ul class="methodology-list">
         <li>Both E(n) and S(n) follow pure geometric growth at fixed rates. Real inflation is volatile; the model trades realism for clarity.</li>
-        <li>The household's basket is held constant in real terms — there is no substitution toward cheaper goods as prices rise.</li>
+        <li>The household's basket is held constant in real terms; there is no substitution toward cheaper goods as prices rise.</li>
         <li>Support is treated as cash-equivalent. In-kind benefits (subsidised healthcare, education, housing) are deliberately out of scope.</li>
         <li>The 10-year horizon is a teaching choice. Beyond ten years the geometric drift dominates anything else; for the qualitative point that's sufficient.</li>
       </ul>
 
       <h3 class="sub-h3">Reference reading</h3>
       <ul class="methodology-list">
-        <li>Singapore Budget 2025 — <a href="https://www.mof.gov.sg/singaporebudget" rel="noopener">mof.gov.sg/singaporebudget</a> — primary source for current scheme amounts.</li>
-        <li>SingStat — <a href="https://www.singstat.gov.sg" rel="noopener">singstat.gov.sg</a> — Household Expenditure Survey, CPI, household income distribution.</li>
-        <li>Ministry of Social and Family Development — <a href="https://www.msf.gov.sg" rel="noopener">msf.gov.sg</a> — PCHI definitions and eligibility frameworks.</li>
-        <li>Monetary Authority of Singapore — <a href="https://www.mas.gov.sg" rel="noopener">mas.gov.sg</a> — headline and core inflation series.</li>
+        <li>Singapore Budget 2025 (<a href="https://www.mof.gov.sg/singaporebudget" rel="noopener">mof.gov.sg/singaporebudget</a>): primary source for current scheme amounts.</li>
+        <li>SingStat (<a href="https://www.singstat.gov.sg" rel="noopener">singstat.gov.sg</a>): Household Expenditure Survey, CPI, and household income distribution.</li>
+        <li>Ministry of Social and Family Development (<a href="https://www.msf.gov.sg" rel="noopener">msf.gov.sg</a>): PCHI definitions and eligibility frameworks.</li>
+        <li>Monetary Authority of Singapore (<a href="https://www.mas.gov.sg" rel="noopener">mas.gov.sg</a>): headline and core inflation series.</li>
       </ul>
 
       <h3 class="sub-h3">How to cite</h3>
@@ -1601,9 +1722,9 @@
 
     var narrative = el("cross-narrative");
     if (cross === null) {
-      narrative.innerHTML = "support effectiveness stays above the threshold through year 10.";
+      narrative.innerHTML = "effectiveness remains above the threshold throughout the ten-year horizon.";
     } else {
-      narrative.innerHTML = 'effectiveness drops below it in year <strong>' + cross + '</strong>.';
+      narrative.innerHTML = 'effectiveness first falls below the threshold in year <strong>' + cross + '</strong>.';
     }
 
     renderCompareChart();
@@ -2009,7 +2130,7 @@
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(url).then(
           function () { showToast("Link copied ✓"); },
-          function () { showToast("Couldn't copy — select the URL bar"); }
+          function () { showToast("Couldn't copy. Select the URL bar."); }
         );
       } else {
         var ta = document.createElement("textarea");
@@ -2105,6 +2226,7 @@
   // ---------- Boot ----------
 
   setupThemeToggle();
+  setupChapters();
   loadStateFromHash();
   wireIncomeSlider();
   wireIncomeNumber();
@@ -2118,6 +2240,76 @@
   computeReadTime();
   setupReveal();
   setupReadProgress();
+
+  function setupChapters() {
+    var nav = el("chapters");
+    var toggle = el("chapters-toggle");
+    if (!nav || !toggle) return;
+
+    var mqWide = window.matchMedia ? window.matchMedia("(min-width: 64rem)") : null;
+    function isWide() { return mqWide ? mqWide.matches : window.innerWidth >= 1024; }
+
+    function setOpen(open) {
+      nav.setAttribute("data-open", open ? "true" : "false");
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    setOpen(isWide());
+
+    toggle.addEventListener("click", function (e) {
+      e.stopPropagation();
+      setOpen(nav.getAttribute("data-open") !== "true");
+    });
+
+    // Close when clicking a chapter link on narrow screens.
+    nav.addEventListener("click", function (e) {
+      var t = e.target;
+      while (t && t !== nav && (t.tagName || "").toUpperCase() !== "A") t = t.parentNode;
+      if (t && (t.tagName || "").toUpperCase() === "A" && !isWide()) {
+        setOpen(false);
+      }
+    });
+
+    // Click outside on narrow screens collapses the menu.
+    document.addEventListener("click", function (e) {
+      if (isWide()) return;
+      if (nav.getAttribute("data-open") !== "true") return;
+      if (!nav.contains(e.target)) setOpen(false);
+    });
+
+    // Reopen automatically when viewport widens past breakpoint, close when it narrows.
+    if (mqWide) {
+      var listener = function (e) { setOpen(e.matches); };
+      if (mqWide.addEventListener) mqWide.addEventListener("change", listener);
+      else if (mqWide.addListener) mqWide.addListener(listener);
+    }
+
+    // Scroll-spy: highlight the chapter the reader is currently in.
+    if (!("IntersectionObserver" in window)) return;
+    var links = nav.querySelectorAll("[data-target]");
+    var byId = {};
+    links.forEach(function (a) { byId[a.getAttribute("data-target")] = a; });
+
+    var visible = {};
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        visible[e.target.id] = e.isIntersecting ? e.intersectionRatio : 0;
+      });
+      var best = null, bestRatio = 0;
+      Object.keys(visible).forEach(function (id) {
+        if (visible[id] > bestRatio) { best = id; bestRatio = visible[id]; }
+      });
+      if (best) {
+        links.forEach(function (a) { a.classList.remove("active"); });
+        if (byId[best]) byId[best].classList.add("active");
+      }
+    }, { rootMargin: "-30% 0px -55% 0px", threshold: [0, 0.2, 0.4, 0.6, 0.8, 1] });
+
+    var sections = document.querySelectorAll(".moment");
+    sections.forEach(function (s) {
+      if (s.id && byId[s.id]) spy.observe(s);
+    });
+  }
 
   function setupThemeToggle() {
     var btn = el("theme-toggle");
